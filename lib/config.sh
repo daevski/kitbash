@@ -2,11 +2,11 @@
 # Configuration management for Kitbash
 # This library handles loading and validating configuration files
 
-# Exit codes
-readonly EXIT_SUCCESS=0
-readonly EXIT_ERROR=1
-readonly EXIT_CONFIG_MISSING=2
-readonly EXIT_CONFIG_INVALID=3
+# Load exit codes (should already be loaded by caller, but ensure it's available)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -z "$KIT_EXIT_SUCCESS" ]; then
+    source "$SCRIPT_DIR/exitcodes.sh"
+fi
 
 # Load configuration file with precedence
 # Priority: kit.conf > kit.conf.example
@@ -33,13 +33,13 @@ load_config() {
         echo "  - $KITBASH_CONFIG_EXAMPLE (default template)" >&2
         echo "" >&2
         echo "Please ensure you're running kitbash from the correct directory." >&2
-        return $EXIT_CONFIG_MISSING
+        return $KIT_EXIT_CONFIG_MISSING
     fi
 
     if [ "$config_loaded" = true ]; then
-        return $EXIT_SUCCESS
+        return $KIT_EXIT_SUCCESS
     else
-        return $EXIT_CONFIG_MISSING
+        return $KIT_EXIT_CONFIG_MISSING
     fi
 }
 
@@ -86,11 +86,11 @@ validate_config() {
         echo "" >&2
         echo "Configuration validation failed with $errors error(s)" >&2
         echo "Please fix the issues above and try again" >&2
-        return $EXIT_CONFIG_INVALID
+        return $KIT_EXIT_CONFIG_INVALID
     fi
 
     echo "[DEBUG] Configuration validation passed" >&2
-    return $EXIT_SUCCESS
+    return $KIT_EXIT_SUCCESS
 }
 
 # Display current configuration (for debugging)
@@ -150,5 +150,5 @@ init_config() {
         return $?
     fi
 
-    return $EXIT_SUCCESS
+    return $KIT_EXIT_SUCCESS
 }

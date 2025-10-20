@@ -5,24 +5,27 @@ main_setup() {
     # Get the directory of this script
     local SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+    # Load exit codes first (needed by all other libraries)
+    source "$SCRIPT_DIR/lib/exitcodes.sh"
+
     # Load path management library
-    source "$SCRIPT_DIR/paths.sh"
+    source "$SCRIPT_DIR/lib/paths.sh"
     if ! init_paths; then
         echo "ERROR: Failed to initialize kitbash paths" >&2
-        return 1
+        return $KIT_EXIT_ERROR
     fi
 
     # Verify installation integrity
     if ! verify_installation; then
         echo "ERROR: Kitbash installation verification failed" >&2
-        return 1
+        return $KIT_EXIT_ERROR
     fi
 
     # Load configuration management library
     source "$KITBASH_LIB/config.sh"
     if ! init_config; then
         echo "ERROR: Failed to load configuration" >&2
-        return 2
+        return $?  # Propagate specific config error code
     fi
 
     # Set legacy variables for backwards compatibility (temporary)

@@ -28,11 +28,11 @@ detect_kitbash_root() {
     local script_dir="$(cd "$(dirname "$script_path")" && pwd)"
 
     # Determine KITBASH_ROOT based on where this script lives
-    # If called from kit.d/_lib/, go up two levels
+    # If called from lib/, go up one level
     # If called from kit.d/, go up one level
     # If called from root, use current directory
-    if [[ "$script_dir" == */kit.d/_lib ]]; then
-        KITBASH_ROOT="$(cd "$script_dir/../.." && pwd)"
+    if [[ "$script_dir" == */lib ]]; then
+        KITBASH_ROOT="$(cd "$script_dir/.." && pwd)"
     elif [[ "$script_dir" == */kit.d ]]; then
         KITBASH_ROOT="$(cd "$script_dir/.." && pwd)"
     else
@@ -53,7 +53,7 @@ init_paths() {
 
     # Set and export all standard paths
     export KITBASH_MODULES="$KITBASH_ROOT/kit.d"
-    export KITBASH_LIB="$KITBASH_ROOT/kit.d/_lib"
+    export KITBASH_LIB="$KITBASH_ROOT/lib"
     export KITBASH_CONFIG="$KITBASH_ROOT/kit.conf"
     export KITBASH_CONFIG_EXAMPLE="$KITBASH_ROOT/kit.conf.example"
     export KITBASH_LOG="$KITBASH_ROOT/kit.log"

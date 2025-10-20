@@ -196,14 +196,17 @@ The main entry point that handles:
 - Initial system setup
 - Module discovery and execution
 
-### Library Functions (`setup.d/_lib/`)
-- **logging.sh** - Logging functions and console output
+### Library Functions (`lib/`)
+Core infrastructure for the kitbash tool:
+- **exitcodes.sh** - Standardized exit codes and error handling
+- **paths.sh** - Path detection and management
+- **config.sh** - Configuration loading and validation
+- **logging.sh** - Dual console/file logging system
 - **module-runner.sh** - Module discovery and execution
 - **setup-functions.sh** - Setup helper functions
 - **validation.sh** - Configuration validation
-- **run-setup.sh** - Main setup orchestration
 
-### Module Scripts (`setup.d/*.sh`)
+### Module Scripts (`kit.d/*.sh`)
 Self-contained scripts that configure specific features. Each module:
 - Uses the logging library for clean output
 - Can be run independently
@@ -225,6 +228,43 @@ Kitbash works seamlessly with dotfiles repositories through the `dotfiles.sh` mo
    ```
 
 This will clone your dotfiles and initialize a dedicated directory (not `$HOME`) as a git repository, allowing you to track your personal configuration files separately from the kitbash tool.
+
+## Exit Codes
+
+Kitbash uses consistent exit codes across all modules for predictable error handling:
+
+| Exit Code | Constant | Description |
+|-----------|----------|-------------|
+| `0` | `KIT_EXIT_SUCCESS` | Operation completed successfully |
+| `1` | `KIT_EXIT_ERROR` | General/unspecified error |
+| `2` | `KIT_EXIT_CONFIG_MISSING` | Configuration file not found |
+| `3` | `KIT_EXIT_CONFIG_INVALID` | Configuration file is invalid or malformed |
+| `3` | `KIT_EXIT_DEPENDENCY_MISSING` | Required dependency not installed |
+| `4` | `KIT_EXIT_PERMISSION_DENIED` | Insufficient permissions |
+| `5` | `KIT_EXIT_MODULE_FAILED` | Module execution failed |
+| `6` | `KIT_EXIT_MODULE_SKIPPED` | Module intentionally skipped |
+| `7` | `KIT_EXIT_NETWORK_ERROR` | Network/download error |
+| `8` | `KIT_EXIT_USER_CANCELLED` | User cancelled operation |
+| `9` | `KIT_EXIT_INVALID_INPUT` | Invalid user input |
+
+These constants are defined in `lib/exitcodes.sh` and are available to all scripts via sourcing.
+
+### Usage in Scripts
+
+```bash
+# Source exit codes
+source "$KITBASH_LIB/exitcodes.sh"
+
+# Use exit codes
+if ! some_command; then
+    echo "ERROR: Command failed" >&2
+    return $KIT_EXIT_ERROR
+fi
+
+# Helper functions
+exit_with $KIT_EXIT_CONFIG_MISSING "Config file not found"      # Exits script
+return_with $KIT_EXIT_MODULE_FAILED "Module failed to execute"  # Returns from function
+```
 
 ## Contributing
 
