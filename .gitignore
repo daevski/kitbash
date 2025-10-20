@@ -1,0 +1,11 @@
+# User-specific configuration (copy from kit.conf.example)
+kit.conf
+
+# Generated log files
+kit.log
+
+# Backup files
+*.bak
+
+# Personal todo tracking
+*todo.md

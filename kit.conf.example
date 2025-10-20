@@ -1,0 +1,91 @@
+#!/bin/bash
+# Kitbash Configuration Template
+# Copy this file to kit.conf and customize for your system:
+#   cp kit.conf.example kit.conf
+
+# ==============================================================================
+# REQUIRED SETTINGS
+# ==============================================================================
+
+_hostname='my-computer'              # System hostname
+_terminal='alacritty'                # Default terminal (alacritty, gnome-terminal, konsole, etc.)
+_editor='vim'                        # Default editor (vim, nano, code, etc.)
+
+# ==============================================================================
+# APPEARANCE
+# ==============================================================================
+
+# Wallpaper (can be local path or predefined name from _wallpaper_definitions)
+_wallpaper='my-wallpaper'
+_wallpaper_targets=("desktop" "lock" "login")  # Where to apply wallpaper
+
+# Cursor theme and size
+_cursor='breeze_cursors'             # Cursor theme name
+_cursor_size='24'                    # Cursor size in pixels
+
+# Font (name from _font_definitions or system font name)
+_font='Fira Code'
+
+# ==============================================================================
+# SYSTEM SETTINGS
+# ==============================================================================
+
+# Sudo timeout in minutes (-1 for no timeout until reboot, or number of minutes)
+_sudo_timeout=15
+
+# ==============================================================================
+# OPTIONAL MODULES (true/false)
+# ==============================================================================
+
+_docker=false                        # Install Docker
+_dotfiles=false                      # Clone dotfiles repo (requires _dotfiles_repo)
+_google_chrome=false                 # Install Google Chrome
+_mounts=false                        # Configure network/local mounts
+_ollama=false                        # Install Ollama AI runtime
+_power_never_sleep=false             # Disable automatic sleep/suspend
+_sddm=false                          # Configure SDDM login manager
+_synology=false                      # Install Synology Drive
+_vscode=false                        # Install VS Code
+
+# ==============================================================================
+# DOTFILES REPOSITORY (only used if _dotfiles=true)
+# ==============================================================================
+
+# _dotfiles_repo="yourusername/dotfiles"
+
+# ==============================================================================
+# MOUNT CONFIGURATION (only used if _mounts=true)
+# ==============================================================================
+
+# Network mounts
+# Format: "remote_share:mount_point:home_symlink,option1=value,option2=value"
+_network_mounts=(
+    # CIFS/SMB example:
+    # "//server/share:/mnt/myserver:~/myserver,credfile=~/.smbcreds"
+    #
+    # NFS example (no credentials):
+    # "nfsserver:/export/path:/mnt/nfs:~/nfs"
+)
+
+# Local media drives
+# Format: "device_uuid:mount_point:,option1=value,option2=value"
+_local_media=(
+    # Example (find UUID with: lsblk -f):
+    # "UUID=ABCD-1234:/media/mydrive:"
+)
+
+# ==============================================================================
+# CUSTOM RESOURCES
+# ==============================================================================
+
+# Wallpaper definitions (name:url pairs)
+_wallpaper_definitions=(
+    # Example:
+    # "my-wallpaper:https://example.com/wallpaper.jpg"
+)
+
+# Font definitions (name:url pairs for downloadable fonts)
+_font_definitions=(
+    # Example (must be a .zip file containing .ttf or .otf files):
+    # "My Custom Font:https://example.com/font.zip"
+)
