@@ -20,17 +20,17 @@ A flexible, modular system configuration tool for Linux (optimized for Fedora). 
 
 ```bash
 # Interactive setup (will prompt for configuration)
-curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/kitbash/main/kit-start.sh | bash
+curl -fsSL https://raw.githubusercontent.com/daevski/kitbash/main/kit-start.sh | bash
 
 # With custom dotfiles repo
-curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/kitbash/main/kit-start.sh | bash -s -- --repo yourusername/dotfiles
+curl -fsSL https://raw.githubusercontent.com/daevski/kitbash/main/kit-start.sh | bash -s -- --repo yourusername/dotfiles
 ```
 
 ### 📋 Manual Installation
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/kitbash.git ~/kitbash
+   git clone https://github.com/daevski/kitbash.git ~/kitbash
    cd ~/kitbash
    ```
 
@@ -233,19 +233,19 @@ This will clone your dotfiles and initialize a dedicated directory (not `$HOME`)
 
 Kitbash uses consistent exit codes across all modules for predictable error handling:
 
-| Exit Code | Constant | Description |
-|-----------|----------|-------------|
-| `0` | `KIT_EXIT_SUCCESS` | Operation completed successfully |
-| `1` | `KIT_EXIT_ERROR` | General/unspecified error |
-| `2` | `KIT_EXIT_CONFIG_MISSING` | Configuration file not found |
-| `3` | `KIT_EXIT_CONFIG_INVALID` | Configuration file is invalid or malformed |
-| `3` | `KIT_EXIT_DEPENDENCY_MISSING` | Required dependency not installed |
-| `4` | `KIT_EXIT_PERMISSION_DENIED` | Insufficient permissions |
-| `5` | `KIT_EXIT_MODULE_FAILED` | Module execution failed |
-| `6` | `KIT_EXIT_MODULE_SKIPPED` | Module intentionally skipped |
-| `7` | `KIT_EXIT_NETWORK_ERROR` | Network/download error |
-| `8` | `KIT_EXIT_USER_CANCELLED` | User cancelled operation |
-| `9` | `KIT_EXIT_INVALID_INPUT` | Invalid user input |
+| Exit Code | Constant                      | Description                                |
+| --------- | ----------------------------- | ------------------------------------------ |
+| `0`       | `KIT_EXIT_SUCCESS`            | Operation completed successfully           |
+| `1`       | `KIT_EXIT_ERROR`              | General/unspecified error                  |
+| `2`       | `KIT_EXIT_CONFIG_MISSING`     | Configuration file not found               |
+| `3`       | `KIT_EXIT_CONFIG_INVALID`     | Configuration file is invalid or malformed |
+| `3`       | `KIT_EXIT_DEPENDENCY_MISSING` | Required dependency not installed          |
+| `4`       | `KIT_EXIT_PERMISSION_DENIED`  | Insufficient permissions                   |
+| `5`       | `KIT_EXIT_MODULE_FAILED`      | Module execution failed                    |
+| `6`       | `KIT_EXIT_MODULE_SKIPPED`     | Module intentionally skipped               |
+| `7`       | `KIT_EXIT_NETWORK_ERROR`      | Network/download error                     |
+| `8`       | `KIT_EXIT_USER_CANCELLED`     | User cancelled operation                   |
+| `9`       | `KIT_EXIT_INVALID_INPUT`      | Invalid user input                         |
 
 These constants are defined in `lib/exitcodes.sh` and are available to all scripts via sourcing.
 
