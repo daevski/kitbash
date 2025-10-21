@@ -7,8 +7,8 @@ A flexible, modular system configuration tool for Linux (optimized for Fedora). 
 ## Features
 
 - **Modular Design**: Each feature is self-contained and can be run independently
-- **Configuration-Driven**: All preferences centralized in `setup.conf`
-- **Clean Console Output**: Minimal, progress-focused console messages with detailed logging to `~/setup.log`
+- **Configuration-Driven**: All preferences centralized in `kit.conf`
+- **Clean Console Output**: Minimal, progress-focused console messages with detailed logging to `~/kit.log`
 - **Dynamic Discovery**: Scripts automatically discover and validate available modules
 - **Dual Monitor Support**: Intelligent wallpaper handling for multiple displays
 - **Fedora Optimized**: Designed specifically for Fedora Linux installations
@@ -20,10 +20,10 @@ A flexible, modular system configuration tool for Linux (optimized for Fedora). 
 
 ```bash
 # Interactive setup (will prompt for configuration)
-curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/kitbash/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/kitbash/main/kit-start.sh | bash
 
 # With custom dotfiles repo
-curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/kitbash/main/setup.sh | bash -s -- --repo yourusername/dotfiles
+curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/kitbash/main/kit-start.sh | bash -s -- --repo yourusername/dotfiles
 ```
 
 ### 📋 Manual Installation
@@ -36,22 +36,22 @@ curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/kitbash/main/setup.sh
 
 2. **Create your configuration:**
    ```bash
-   cp setup.conf.example setup.conf
-   # Edit setup.conf with your preferences
+   cp kit.conf.example kit.conf
+   # Edit kit.conf with your preferences
    ```
 
 3. **Run setup:**
    ```bash
-   ./setup.sh                    # Run all configured modules
-   ./setup.sh wallpaper          # Run specific module
-   ./setup.sh help               # See all options
+   ./kit-start.sh                    # Run all configured modules
+   ./kit-start.sh wallpaper          # Run specific module
+   ./kit-start.sh help               # See all options
    ```
 
 ## Configuration
 
-### Setup File (`setup.conf`)
+### Setup File (`kit.conf`)
 
-Create a `setup.conf` file with your preferences:
+Create a `kit.conf` file with your preferences:
 
 ```bash
 # Required preferences
@@ -85,7 +85,7 @@ _font_definitions=(
 
 ## Available Modules
 
-Kitbash includes the following modules in `setup.d/`:
+Kitbash includes the following modules in `kit.d/`:
 
 ### System Configuration
 - **hostname.sh** - Set system hostname
@@ -114,20 +114,20 @@ Kitbash includes the following modules in `setup.d/`:
 ## Usage Examples
 
 ```bash
-# Run all modules configured in setup.conf
-./setup.sh
+# Run all modules configured in kit.conf
+./kit-start.sh
 
 # Run specific modules
-./setup.sh wallpaper
-./setup.sh vscode docker
+./kit-start.sh wallpaper
+./kit-start.sh vscode docker
 
 # Override preferences for one-time use
-./setup.sh wallpaper ~/Pictures/new-wallpaper.jpg
-./setup.sh editor code
-./setup.sh hostname my-new-hostname
+./kit-start.sh wallpaper ~/Pictures/new-wallpaper.jpg
+./kit-start.sh editor code
+./kit-start.sh hostname my-new-hostname
 
 # Get help
-./setup.sh help
+./kit-start.sh help
 ```
 
 ## Logging System
@@ -135,9 +135,9 @@ Kitbash includes the following modules in `setup.d/`:
 Kitbash uses a dual-output logging approach:
 
 - **Console**: Clean, minimal progress indicators showing what's happening
-- **Log File** (`~/setup.log`): Detailed timestamped logs with full command output, debug information, and error details
+- **Log File** (`~/kit.log`): Detailed timestamped logs with full command output, debug information, and error details
 
-When troubleshooting issues, always check `~/setup.log` for complete details about what happened during setup.
+When troubleshooting issues, always check `~/kit.log` for complete details about what happened during setup.
 
 Example console output:
 ```
@@ -153,10 +153,10 @@ Example console output:
 
 ## Creating Custom Modules
 
-1. Create a new script in `setup.d/`:
+1. Create a new script in `kit.d/`:
    ```bash
-   touch setup.d/mymodule.sh
-   chmod +x setup.d/mymodule.sh
+   touch kit.d/mymodule.sh
+   chmod +x kit.d/mymodule.sh
    ```
 
 2. Add logging to your module:
@@ -176,7 +176,7 @@ Example console output:
    fi
    ```
 
-3. Add preference to `setup.conf`:
+3. Add preference to `kit.conf`:
    ```bash
    _mymodule=true
    # Or with a custom value
@@ -185,12 +185,12 @@ Example console output:
 
 4. Run your module:
    ```bash
-   ./setup.sh mymodule
+   ./kit-start.sh mymodule
    ```
 
 ## Architecture
 
-### Bootstrap Script (`setup.sh`)
+### Bootstrap Script (`kit-start.sh`)
 The main entry point that handles:
 - Repository cloning (when run via curl)
 - Initial system setup
@@ -210,21 +210,21 @@ Core infrastructure for the kitbash tool:
 Self-contained scripts that configure specific features. Each module:
 - Uses the logging library for clean output
 - Can be run independently
-- Accepts configuration from `setup.conf` or command-line arguments
+- Accepts configuration from `kit.conf` or command-line arguments
 - Returns appropriate exit codes
 
 ## Integration with Dotfiles
 
 Kitbash works seamlessly with dotfiles repositories through the `dotfiles.sh` module:
 
-1. Set your dotfiles repo in `setup.conf`:
+1. Set your dotfiles repo in `kit.conf`:
    ```bash
    _dotfiles_repo="yourusername/dotfiles"
    ```
 
 2. Run the dotfiles module:
    ```bash
-   ./setup.sh dotfiles
+   ./kit-start.sh dotfiles
    ```
 
 This will clone your dotfiles and initialize a dedicated directory (not `$HOME`) as a git repository, allowing you to track your personal configuration files separately from the kitbash tool.

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Source path management to set KITBASH_ROOT and related variables
+source "$(dirname "$0")/lib/paths.sh"
+init_paths
+
 # Require interactive terminal
 require_interactive() {
     if [ ! -t 0 ] || [ ! -t 1 ]; then
@@ -56,7 +60,7 @@ set -eo pipefail  # Exit on error, pipe failures (nounset disabled for debugging
 DEFAULT_REPO_OWNER="daevski"
 DEFAULT_REPO_NAME="dotfiles"
 DEFAULT_BRANCH="main"
-DOTFILES_DIR="$HOME/dotfiles"
+DOTFILES_DIR="$KITBASH_ROOT/dotfiles"
 
 # Variables to be set by user input
 REPO_OWNER=""
@@ -108,12 +112,12 @@ gather_repo_info() {
     echo ""
 }
 
-# Customize setup.conf based on user preferences
+# Customize kit.conf based on user preferences
 customize_setup_config() {
-    local setup_conf="$HOME/setup.conf"
-    
+    local setup_conf="$KITBASH_ROOT/kit.conf"
+
     if [ ! -f "$setup_conf" ]; then
-        log_error "setup.conf not found - cannot customize"
+        log_error "kit.conf not found - cannot customize"
         return 1
     fi
     
@@ -235,7 +239,7 @@ customize_setup_config() {
         echo ""
         
         if ! prompt_yes_no "Does this look correct?" "y"; then
-            log_warning "You can manually edit ~/setup.conf later to make changes"
+            log_warning "You can manually edit $KITBASH_ROOT/kit.conf later to make changes"
             echo "Aborting setup as requested."
             exit 1
         fi
@@ -326,42 +330,42 @@ setup_dotfiles() {
 
 # Copy dotfiles to home directory
 copy_dotfiles() {
-    log_info "Copying dotfiles to home directory..."
+    log_info "Copying dotfiles to kitbash root directory..."
     
     # Create symlinks or copy files as needed
     # Copy configuration files first
-    if [ -f "$DOTFILES_DIR/setup.conf" ]; then
-        cp "$DOTFILES_DIR/setup.conf" "$HOME/"
+    if [ -f "$DOTFILES_DIR/kit.conf" ]; then
+        cp "$DOTFILES_DIR/kit.conf" "$KITBASH_ROOT/kit.conf"
         log_success "Configuration copied"
-        
+
         # Customize the configuration
         customize_setup_config
     else
-        log_error "setup.conf not found in dotfiles"
+        log_error "kit.conf not found in dotfiles"
         exit 1
     fi
     
     # Copy other essential files
     if [ -f "$DOTFILES_DIR/packages.txt" ]; then
-        cp "$DOTFILES_DIR/packages.txt" "$HOME/"
+        cp "$DOTFILES_DIR/packages.txt" "$KITBASH_ROOT/"
     fi
     
     # Copy setup.d directory
-    if [ -d "$DOTFILES_DIR/setup.d" ]; then
-        cp -r "$DOTFILES_DIR/setup.d" "$HOME/"
-        log_success "Setup modules copied"
+    if [ -d "$DOTFILES_DIR/kit.d" ]; then
+        cp -r "$DOTFILES_DIR/kit.d" "$KITBASH_ROOT/"
+        log_success "Kitbash modules copied"
     else
-        log_error "setup.d directory not found"
+        log_error "kit.d directory not found"
         exit 1
     fi
     
-    # Copy setup.d/_lib directory (includes run-setup.sh)
-    if [ -d "$DOTFILES_DIR/setup.d/_lib" ]; then
-        mkdir -p "$HOME/setup.d"
-        cp -r "$DOTFILES_DIR/setup.d/_lib" "$HOME/setup.d/"
-        log_success "Setup library copied"
+    # Copy lib directory (includes run-setup.sh)
+    if [ -d "$DOTFILES_DIR/lib" ]; then
+        mkdir -p "$KITBASH_ROOT/lib"
+        cp -r "$DOTFILES_DIR/lib" "$KITBASH_ROOT/lib/"
+        log_success "Kitbash library copied"
     else
-        log_error "setup.d/_lib directory not found"
+        log_error "lib directory not found"
         exit 1
     fi
     
@@ -370,7 +374,7 @@ copy_dotfiles() {
         if [[ -f "$file" && ! "$file" =~ /\.(git|gitignore)$ ]]; then
             filename=$(basename "$file")
             if [[ ! "$filename" =~ ^\.(git|gitignore)$ ]]; then
-                cp "$file" "$HOME/"
+                cp "$file" "$KITBASH_ROOT/"
             fi
         fi
     done
@@ -380,7 +384,7 @@ copy_dotfiles() {
         if [[ -d "$dir" && ! "$dir" =~ /\.git/ ]]; then
             dirname=$(basename "$dir")
             if [[ "$dirname" != ".git" ]]; then
-                cp -r "$dir" "$HOME/"
+                cp -r "$dir" "$KITBASH_ROOT/"
             fi
         fi
     done
@@ -392,18 +396,18 @@ copy_dotfiles() {
 run_setup() {
     log_info "Running dotfiles setup..."
     
-    cd "$HOME"
-    if [ -f "$HOME/setup.d/_lib/run-setup.sh" ]; then
+    cd "$KITBASH_ROOT"
+    if [ -f "$KITBASH_LIB/run-setup.sh" ]; then
         # Source the run-setup script to call the main_setup function
-        source "$HOME/setup.d/_lib/run-setup.sh"
+        source "$KITBASH_LIB/run-setup.sh"
         if main_setup "$@"; then
-            log_success "Dotfiles setup completed successfully!"
+            log_success "Kitbash setup completed successfully!"
         else
             log_error "Setup encountered errors"
             exit 1
         fi
     else
-        log_error "run-setup.sh not found in setup.d/_lib/"
+        log_error "run-setup.sh not found in lib/"
         exit 1
     fi
 }
@@ -416,10 +420,17 @@ cleanup() {
 
 # Main execution
 main() {
+    # If first argument matches a module in kit.d/, delegate immediately
+    if [[ $# -gt 0 ]] && [ -f "$KITBASH_MODULES/$1.sh" ]; then
+        source "$KITBASH_LIB/run-setup.sh"
+        main_setup "$@"
+        exit $?
+    fi
+
     echo "=== Kitbash Bootstrap Script ==="
     echo "This will set up your Fedora + Sway development environment"
     echo ""
-    
+
     # Parse arguments
     SKIP_CONFIRMATION=false
     SKIP_PROMPTS=false
@@ -457,7 +468,7 @@ main() {
                 fi
                 ;;
             -h|--help)
-                if is_dotfiles_environment; then
+                if is_kitbash_environment; then
                     echo "=== Dotfiles Management ==="
                     echo ""
                     echo "Existing environment detected - you can use either:"
@@ -477,7 +488,7 @@ main() {
                     echo "  --repo OWNER/REPO   Specify GitHub repository"
                     echo ""
                     echo "Available modules:"
-                    for script_file in "$HOME/setup.d"/*.sh; do
+                    for script_file in "$KITBASH_MODULES"/*.sh; do
                         if [ -f "$script_file" ]; then
                             module_name=$(basename "$script_file" .sh)
                             echo "  - $module_name"
@@ -502,8 +513,8 @@ main() {
                     echo "  1. Prompt for GitHub repository (unless --defaults or --repo used)"
                     echo "  2. Install essential dependencies (git, curl, wget)"
                     echo "  3. Clone/update the dotfiles repository"
-                    echo "  4. Optionally customize setup.conf preferences"
-                    echo "  5. Copy configuration files to your home directory"  
+                    echo "  4. Optionally customize kit.conf preferences"
+                    echo "  5. Copy configuration files to your home directory"
                     echo "  6. Run the full dotfiles setup"
                 fi
                 exit 0
@@ -514,7 +525,7 @@ main() {
                 ;;
         esac
     done
-    
+
     # Require interactive terminal
     require_interactive
 
@@ -536,30 +547,30 @@ main() {
         fi
         echo ""
     fi
-    
+
     # Run setup steps
     check_system
     install_dependencies
     setup_dotfiles
     copy_dotfiles
     run_setup
-    
+
     log_success "Bootstrap complete!"
     echo ""
     echo "Your dotfiles have been set up successfully."
     echo "You may need to restart your shell or log out/in for all changes to take effect."
     echo ""
     echo "Useful commands:"
-    echo "  ~/setup.d/_lib/run-setup.sh              # Re-run full setup"
-    echo "  ~/setup.d/_lib/run-setup.sh <module>     # Run specific module"
-    echo "  ~/setup.d/_lib/run-setup.sh help         # Show available modules"
+    echo "  $KITBASH_LIB/run-setup.sh              # Re-run full setup"
+    echo "  $KITBASH_LIB/run-setup.sh <module>     # Run specific module"
+    echo "  $KITBASH_LIB/run-setup.sh help         # Show available modules"
 }
 
 # Check if we're in an existing dotfiles environment
-is_dotfiles_environment() {
+is_kitbash_environment() {
     # Check if the key files exist that indicate we're already set up
-    if [ -f "$HOME/setup.conf" ] && [ -d "$HOME/setup.d" ] && [ -f "$HOME/setup.d/_lib/run-setup.sh" ]; then
-        return 0  # Yes, we're in a dotfiles environment
+    if [ -f "$KITBASH_CONFIG" ] && [ -d "$KITBASH_MODULES" ] && [ -f "$KITBASH_LIB/run-setup.sh" ]; then
+        return 0  # Yes, we're in a kitbash environment
     else
         return 1  # No, we need to bootstrap
     fi
@@ -569,26 +580,26 @@ is_dotfiles_environment() {
 trap cleanup EXIT
 
 # Check if we should delegate to existing environment first
-if is_dotfiles_environment && [ $# -gt 0 ] && [[ "$1" != "-"* ]]; then
+if is_kitbash_environment && [ $# -gt 0 ] && [[ "$1" != "-*" ]]; then
     # We have arguments and we're in an existing environment
     # Check if the first argument might be a module name or special command
     case "$1" in
         "help"|"-h"|"--help"|"repos"|"packages")
             # These are valid run-setup commands, delegate to it
-            log_info "Using existing dotfiles environment..."
-            source "$HOME/setup.d/_lib/run-setup.sh"
+            log_info "Using existing kitbash environment..."
+            source "$KITBASH_LIB/run-setup.sh"
             main_setup "$@"
             exit $?
             ;;
         *)
-            # Check if it's a module file
-            if [ -f "$HOME/setup.d/$1.sh" ]; then
-                source "$HOME/setup.d/_lib/run-setup.sh"
+            # Check if it's a module file in kit.d only
+            if [ -f "$KITBASH_MODULES/$1.sh" ]; then
+                source "$KITBASH_LIB/run-setup.sh"
                 main_setup "$@"
                 exit $?
             else
                 # Not a valid module, continue with bootstrap logic
-                log_warning "Module '$1' not found, proceeding with bootstrap..."
+                log_warning "Module '$1' not found in kit.d, proceeding with bootstrap..."
             fi
             ;;
     esac

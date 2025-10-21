@@ -198,7 +198,7 @@ if [ -n "${_network_mounts[*]}" ]; then
         process_mount_config "$config" "network"
     done
 else
-    log_debug "No network mount configurations defined in setup.conf"
+    log_debug "No network mount configurations defined in kit.conf"
 fi
 
 # Process local media drives
@@ -209,7 +209,7 @@ if [ -n "${_local_media[*]}" ]; then
         process_mount_config "$config" "local"
     done
 else
-    log_debug "No local media drive configurations defined in setup.conf"
+    log_debug "No local media drive configurations defined in kit.conf"
 fi
 
 log_debug ""

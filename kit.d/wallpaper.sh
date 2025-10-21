@@ -127,25 +127,22 @@ _wallpaper_ext="$_source_ext"
 log_debug "Normalized wallpaper path: $_wallpaper_path"
 
 # Source the configuration to get wallpaper targets and definitions
-# Try multiple paths to find setup.conf
-if [ -f "$HOME/setup.conf" ]; then
-    source "$HOME/setup.conf"
-elif [ -f "$(dirname "$(dirname "$0")")/setup.conf" ]; then
-    source "$(dirname "$(dirname "$0")")/setup.conf"
+if [ -f "$KITBASH_CONFIG" ]; then
+    source "$KITBASH_CONFIG"
 else
-    log_error "Could not find setup.conf - required for wallpaper definitions"
-    log_error "Please ensure setup.conf exists in your home directory"
+    log_error "Could not find kit.conf - required for wallpaper definitions"
+    log_error "Please ensure kit.conf exists in your kitbash root directory"
     exit 1
 fi
 
 # Verify required variables are loaded
 if [ -z "${_wallpaper_targets[*]}" ]; then
-    log_warning "_wallpaper_targets not found in setup.conf, using defaults"
+    log_warning "_wallpaper_targets not found in kit.conf, using defaults"
     _wallpaper_targets=("desktop" "lock" "login")
 fi
 
 if [ -z "${_wallpaper_definitions[*]}" ]; then
-    log_warning "_wallpaper_definitions not found in setup.conf"
+    log_warning "_wallpaper_definitions not found in kit.conf"
     log_warning "Predefined wallpaper names will not work"
     _wallpaper_definitions=()
 fi

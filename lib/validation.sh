@@ -17,7 +17,7 @@ validate_required_prefs() {
             log_error "  - $pref"
         done
         log_error ""
-        log_error "Please set these variables in setup.conf and try again."
+    log_error "Please set these variables in kit.conf and try again."
         exit 1
     fi
 }
@@ -54,7 +54,7 @@ check_orphaned_preferences() {
         done
         log_error ""
         log_error "This indicates an invalid configuration. Please either:"
-        log_error "  1. Remove unused preference variables from setup.conf, or"
+    log_error "  1. Remove unused preference variables from kit.conf, or"
         log_error "  2. Create corresponding scripts in $_scripts"
         log_error ""
         log_error "Configuration must be fixed before running setup."

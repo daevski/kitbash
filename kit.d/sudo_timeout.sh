@@ -2,7 +2,7 @@
 
 # Sudo Configuration Management Script
 # Configures sudo timeout and other sudo preferences
-# Can be called with timeout value as parameter or uses _sudo_timeout from setup.conf
+# Can be called with timeout value as parameter or uses _sudo_timeout from kit.conf
 
 # Determine timeout value - use parameter if provided, otherwise use config
 timeout_value="${1:-$_sudo_timeout}"
