@@ -6,10 +6,10 @@ main_setup() {
     local SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
     # Load exit codes first (needed by all other libraries)
-    source "$SCRIPT_DIR/lib/exitcodes.sh"
+    source "$KITBASH_LIB/exitcodes.sh"
 
     # Load path management library
-    source "$SCRIPT_DIR/lib/paths.sh"
+    source "$KITBASH_LIB/paths.sh"
     if ! init_paths; then
         echo "ERROR: Failed to initialize kitbash paths" >&2
         return $KIT_EXIT_ERROR
