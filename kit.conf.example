@@ -7,16 +7,16 @@
 # REQUIRED SETTINGS
 # ==============================================================================
 
-_hostname='my-computer'              # System hostname
-_terminal='alacritty'                # Default terminal (alacritty, gnome-terminal, konsole, etc.)
-_editor='vim'                        # Default editor (vim, nano, code, etc.)
+_hostname='desktop'     # System hostname
+_terminal='alacritty'   # Default terminal (alacritty, gnome-terminal, konsole, etc.)
+_editor='vim'           # Default editor (vim, nano, code, etc.)
 
 # ==============================================================================
 # APPEARANCE
 # ==============================================================================
 
 # Wallpaper (can be local path or predefined name from _wallpaper_definitions)
-_wallpaper='my-wallpaper'
+_wallpaper='minimal-colored-circles'
 _wallpaper_targets=("desktop" "lock" "login")  # Where to apply wallpaper
 
 # Cursor theme and size
@@ -24,7 +24,7 @@ _cursor='breeze_cursors'             # Cursor theme name
 _cursor_size='24'                    # Cursor size in pixels
 
 # Font (name from _font_definitions or system font name)
-_font='Fira Code'
+_font='AudioLink Mono'
 
 # ==============================================================================
 # SYSTEM SETTINGS
@@ -37,15 +37,15 @@ _sudo_timeout=15
 # OPTIONAL MODULES (true/false)
 # ==============================================================================
 
+_dotfiles=true                      # Clone dotfiles repo (requires _dotfiles_repo)
 _docker=false                        # Install Docker
-_dotfiles=false                      # Clone dotfiles repo (requires _dotfiles_repo)
-_google_chrome=false                 # Install Google Chrome
+_google_chrome=true                 # Install Google Chrome
 _mounts=false                        # Configure network/local mounts
 _ollama=false                        # Install Ollama AI runtime
-_power_never_sleep=false             # Disable automatic sleep/suspend
+_power_never_sleep=true             # Disable automatic sleep/suspend
 _sddm=false                          # Configure SDDM login manager
-_synology=false                      # Install Synology Drive
-_vscode=false                        # Install VS Code
+_synology=true                      # Install Synology Drive
+_vscode=true                        # Install VS Code
 
 # ==============================================================================
 # DOTFILES REPOSITORY (only used if _dotfiles=true)
@@ -81,11 +81,11 @@ _local_media=(
 # Wallpaper definitions (name:url pairs)
 _wallpaper_definitions=(
     # Example:
-    # "my-wallpaper:https://example.com/wallpaper.jpg"
+    "minimal-colored-circles:https://www.pxfuel.com/en/desktop-wallpaper-qjdxx/download/1920x1080"
 )
 
 # Font definitions (name:url pairs for downloadable fonts)
 _font_definitions=(
     # Example (must be a .zip file containing .ttf or .otf files):
-    # "My Custom Font:https://example.com/font.zip"
+    "AudioLink Mono:https://audiolink.dev/gallery/AudioLinkMono.zip"
 )
