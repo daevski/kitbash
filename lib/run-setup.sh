@@ -56,8 +56,22 @@ main_setup() {
             log_debug "Requested module: $requested_module"
             sudo -n true 2>/dev/null || sudo -v || return 1
 
-            # Use the same logic as module discovery - pass any additional arguments
-            process_module "$script_file" "${@:2}"
+            # If override arguments provided (e.g. `run-setup.sh module arg`),
+            # pass them through so module can consume values. Otherwise, when
+            # the user explicitly asked for a module (e.g. `kit dotfiles`) we
+            # should run the module regardless of kit.conf booleans. That means
+            # we bypass the preference-based skipping logic in
+            # process_module and run the module with defaults.
+            if [ ${#@} -gt 1 ]; then
+                # There are extra args after the module name; let process_module
+                # handle them (it will call the module with provided args).
+                process_module "$script_file" "${@:2}"
+            else
+                # No override args — run the module unconditionally with
+                # default behavior (ignore kit.conf boolean values).
+                run_module_with_defaults "$requested_module" "$script_file"
+            fi
+
             return 0
         fi
     fi
@@ -68,26 +82,12 @@ main_setup() {
             show_usage
             return 0
             ;;
-        "repos")
-            log_info "Initializing..."
-            sudo -n true 2>/dev/null || sudo -v || return 1
-            setup_repos
-            ;;
-        "packages")
-            log_info "Initializing..."
-            sudo -n true 2>/dev/null || sudo -v || return 1
-            setup_packages
-            ;;
         "")
             # Run full setup with module discovery
             log_info "Initializing..."
             sudo -n true 2>/dev/null || sudo -v || return 1
 
-            # First run core system setup
-            setup_repos
-            setup_packages
-
-            # Then run discovered modules
+            # Run discovered modules
             run_discovered_modules
             ;;
         *)

@@ -13,25 +13,6 @@ setup_hostname() {
     log_success "Module 'hostname' completed"
 }
 
-setup_repos() {
-    echo "> setting up 3rd-party repositories ..."
-    if [ "$_google_chrome" = true ]; then
-        echo -n "  > google chrome repo ... "
-        source ${_scripts}google_chrome.sh
-        echo "done"
-    fi
-    if [ "$_vscode" = true ]; then
-        echo -n "  > vscode repo ... "
-        source ${_scripts}vscode.sh
-        echo "done"
-    fi
-}
-
-setup_packages() {
-    echo "> installing packages from $_packages ..."
-    xargs -n 1 sudo dnf install -y < "$_packages"
-}
-
 setup_dotfiles() {
     echo -n "> setting up dotfiles ... "
     source ${_scripts}dotfiles.sh
@@ -74,17 +55,11 @@ setup_cursor() {
 }
 
 show_usage() {
-    echo "Usage: $0 [STEP] [OPTIONS]"
+    echo "Usage: $0 [MODULE] [OPTIONS]"
     echo ""
-    echo "Run the full setup or individual steps:"
+    echo "Run the full setup or individual modules:"
     echo "  $0                         Run all enabled modules (discovered automatically)"
-    echo "  $0 hostname [NAME]         Set hostname (default: $_hostname)"
-    echo "  $0 repos                   Set up 3rd-party repositories"
-    echo "  $0 packages                Install packages from packages.txt"
-    echo "  $0 dotfiles                Set up dotfiles"
-    echo "  $0 wallpaper [PATH]        Set up wallpaper (default: $_wallpaper)"
-    echo "  $0 ollama                  Install and configure Ollama AI runtime"
-    echo "  $0 cursor [THEME] [SIZE]   Set up cursor theme (default: $_cursor, size $_cursor_size)"
+    echo "  $0 <module_name>           Run a specific module"
     echo "  $0 help                    Show this help message"
     echo ""
     echo "Configuration:"
@@ -107,7 +82,7 @@ show_usage() {
     done
     echo ""
     echo "Examples:"
+    echo "  $0 google_chrome           Run the google_chrome module"
     echo "  $0 wallpaper ~/Pictures/my-wallpaper.jpg"
     echo "  $0 hostname mycomputer"
-    echo "  $0 cursor breeze_cursors 32"
 }

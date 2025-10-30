@@ -307,25 +307,12 @@ install_dependencies() {
 
 # Clone or update dotfiles repository
 setup_dotfiles() {
-    log_info "Setting up dotfiles repository..."
-
-    if [ -d "$DOTFILES_DIR" ]; then
-        log_info "Dotfiles directory exists, updating..."
-        cd "$DOTFILES_DIR"
-        git fetch origin
-        git reset --hard "origin/$BRANCH"
-        log_success "Dotfiles updated to latest version"
-    else
-        log_info "Cloning dotfiles repository..."
-        if git clone "$REPO_URL" "$DOTFILES_DIR"; then
-            log_success "Dotfiles cloned successfully"
-        else
-            log_error "Failed to clone dotfiles repository"
-            exit 1
-        fi
-    fi
-
-    cd "$DOTFILES_DIR"
+    log_info "Skipping repository clone: the dotfiles module will manage $HOME directly"
+    # The dotfiles module (`kit.d/dotfiles.sh`) manages remotes and performs
+    # the fetch/reset into $HOME. We intentionally avoid cloning the
+    # dotfiles repository into $KITBASH_ROOT/dotfiles to prevent duplicate
+    # flows and to ensure the module operates on $HOME as the working tree.
+    return 0
 }
 
 # Copy dotfiles to home directory
@@ -333,15 +320,14 @@ copy_dotfiles() {
     log_info "Copying dotfiles to kitbash root directory..."
     
     # Create symlinks or copy files as needed
-    # Copy configuration files first
-    if [ -f "$DOTFILES_DIR/kit.conf" ]; then
-        cp "$DOTFILES_DIR/kit.conf" "$KITBASH_ROOT/kit.conf"
-        log_success "Configuration copied"
+    # Use kit.conf from the repository root (preferred)
+    if [ -f "$KITBASH_ROOT/kit.conf" ]; then
+        log_info "Found kit.conf in kitbash root; using repository configuration"
 
         # Customize the configuration
         customize_setup_config
     else
-        log_error "kit.conf not found in dotfiles"
+        log_error "kit.conf not found in kitbash root ($KITBASH_ROOT/kit.conf)"
         exit 1
     fi
     
@@ -476,8 +462,6 @@ main() {
                     echo "Module mode (run specific modules):"
                     echo "  $0 <module>          # Run specific module"
                     echo "  $0 help              # Show available modules"
-                    echo "  $0 repos             # Setup repositories only"  
-                    echo "  $0 packages          # Install packages only"
                     echo ""
                     echo "Bootstrap mode (fresh setup):"
                     echo "  $0 [OPTIONS]         # Run full bootstrap"
@@ -551,8 +535,7 @@ main() {
     # Run setup steps
     check_system
     install_dependencies
-    setup_dotfiles
-    copy_dotfiles
+    # Do not clone/copy dotfiles; the dotfiles module will manage $HOME
     run_setup
 
     log_success "Bootstrap complete!"
@@ -584,7 +567,7 @@ if is_kitbash_environment && [ $# -gt 0 ] && [[ "$1" != "-*" ]]; then
     # We have arguments and we're in an existing environment
     # Check if the first argument might be a module name or special command
     case "$1" in
-        "help"|"-h"|"--help"|"repos"|"packages")
+        "help"|"-h"|"--help")
             # These are valid run-setup commands, delegate to it
             log_info "Using existing kitbash environment..."
             source "$KITBASH_LIB/run-setup.sh"
