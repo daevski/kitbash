@@ -93,11 +93,19 @@ else
     else
         log_error "'$_wallpaper_input' is not a valid file path or predefined wallpaper name"
         log_error ""
-        log_error "Available predefined wallpapers:"
-        for definition in "${_wallpaper_definitions[@]}"; do
-            local name="${definition%%:*}"
-            log_error "  - $name"
-        done
+        if [ ${#_wallpaper_definitions[@]} -gt 0 ]; then
+            log_error "Available predefined wallpapers:"
+            for definition in "${_wallpaper_definitions[@]}"; do
+                local name="${definition%%:*}"
+                log_error "  - $name"
+            done
+        else
+            log_error "No predefined wallpapers configured in kit.conf"
+            log_error "Add wallpapers to _wallpaper_definitions array in the format:"
+            log_error "  _wallpaper_definitions=("
+            log_error "    \"name:https://example.com/wallpaper.jpg\""
+            log_error "  )"
+        fi
         exit 1
     fi
 fi
