@@ -53,7 +53,7 @@ execute_module() {
 run_module_with_defaults() {
     local module_name="$1"
     local script_file="$2"
-    
+
     case "$module_name" in
         "hostname") setup_hostname ;;
         "wallpaper") setup_wallpaper ;;
@@ -61,8 +61,13 @@ run_module_with_defaults() {
         "font") setup_font ;;
         *)
             log_info "Running module: $module_name"
-            source "$script_file"
-            log_success "Module '$module_name' completed"
+            if (source "$script_file"); then
+                log_success "Module '$module_name' completed"
+            else
+                local exit_code=$?
+                log_error "Module '$module_name' failed with exit code $exit_code"
+                log_warning "Continuing with remaining modules..."
+            fi
             ;;
     esac
 }
@@ -72,7 +77,7 @@ run_module_with_value() {
     local module_name="$1"
     local script_file="$2"
     local pref_value="$3"
-    
+
     case "$module_name" in
         "hostname") setup_hostname "$pref_value" ;;
         "wallpaper") setup_wallpaper "$pref_value" ;;
@@ -80,8 +85,13 @@ run_module_with_value() {
         "font") setup_font "$pref_value" ;;
         *)
             log_info "Running module: $module_name (configured: $pref_value)"
-            source "$script_file" "$pref_value"
-            log_success "Module '$module_name' completed"
+            if (source "$script_file" "$pref_value"); then
+                log_success "Module '$module_name' completed"
+            else
+                local exit_code=$?
+                log_error "Module '$module_name' failed with exit code $exit_code"
+                log_warning "Continuing with remaining modules..."
+            fi
             ;;
     esac
 }
@@ -110,8 +120,14 @@ process_module() {
             "font") setup_font "${override_args[0]}" ;;
             *)
                 log_info "Running module: $module_name (args: ${override_args[*]})"
-                source "$script_file" "${override_args[@]}"
-                log_success "Module '$module_name' completed"
+                if (source "$script_file" "${override_args[@]}"); then
+                    log_success "Module '$module_name' completed"
+                    return 0
+                else
+                    local exit_code=$?
+                    log_error "Module '$module_name' failed with exit code $exit_code"
+                    return $exit_code
+                fi
                 ;;
         esac
         return 0
