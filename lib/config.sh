@@ -8,39 +8,37 @@ if [ -z "$KIT_EXIT_SUCCESS" ]; then
     source "$SCRIPT_DIR/exitcodes.sh"
 fi
 
-# Load configuration file with precedence
-# Priority: kit.conf > kit.conf.example
+# Load configuration file
+# Requires kit.conf to exist - will NOT fall back to kit.conf.example
 load_config() {
-    local config_loaded=false
+    # Assert that kit.conf exists
+    if [ ! -f "$KITBASH_CONFIG" ]; then
+        echo "ERROR: Configuration file not found: $KITBASH_CONFIG" >&2
+        echo "" >&2
+        echo "Kitbash requires a customized configuration file to run." >&2
+        echo "" >&2
 
-    # Try to load user's custom config first
-    if [ -f "$KITBASH_CONFIG" ]; then
-        echo "[DEBUG] Loading configuration from: $KITBASH_CONFIG" >&2
-        source "$KITBASH_CONFIG"
-        config_loaded=true
-    elif [ -f "$KITBASH_CONFIG_EXAMPLE" ]; then
-        # Fall back to example config
-        echo "[INFO] No kit.conf found, using defaults from kit.conf.example" >&2
-        echo "[INFO] To customize: cp $KITBASH_CONFIG_EXAMPLE $KITBASH_CONFIG" >&2
-        source "$KITBASH_CONFIG_EXAMPLE"
-        config_loaded=true
-    else
-        echo "ERROR: No configuration file found!" >&2
+        # Check if example exists to provide helpful guidance
+        if [ -f "$KITBASH_CONFIG_EXAMPLE" ]; then
+            echo "To get started, copy the example configuration and customize it:" >&2
+            echo "  cp $KITBASH_CONFIG_EXAMPLE $KITBASH_CONFIG" >&2
+            echo "" >&2
+            echo "Then edit $KITBASH_CONFIG to match your preferences:" >&2
+            echo "  - Set your hostname (_hostname)" >&2
+            echo "  - Choose your terminal emulator (_terminal)" >&2
+            echo "  - Choose your editor (_editor)" >&2
+            echo "  - Enable/disable optional modules" >&2
+        else
+            echo "ERROR: Template file also missing: $KITBASH_CONFIG_EXAMPLE" >&2
+            echo "Please ensure you're running kitbash from the correct directory." >&2
+        fi
         echo "" >&2
-        echo "Kitbash requires a configuration file to run." >&2
-        echo "Expected one of:" >&2
-        echo "  - $KITBASH_CONFIG (your custom config)" >&2
-        echo "  - $KITBASH_CONFIG_EXAMPLE (default template)" >&2
-        echo "" >&2
-        echo "Please ensure you're running kitbash from the correct directory." >&2
         return $KIT_EXIT_CONFIG_MISSING
     fi
 
-    if [ "$config_loaded" = true ]; then
-        return $KIT_EXIT_SUCCESS
-    else
-        return $KIT_EXIT_CONFIG_MISSING
-    fi
+    echo "[DEBUG] Loading configuration from: $KITBASH_CONFIG" >&2
+    source "$KITBASH_CONFIG"
+    return $KIT_EXIT_SUCCESS
 }
 
 # Validate required configuration variables
