@@ -16,8 +16,22 @@ log_debug "Terminal application: $TERMINAL_APP"
 
 # Check if the terminal application is installed
 if ! command -v "$TERMINAL_APP" >/dev/null 2>&1; then
-    log_error "$TERMINAL_APP not found, please install it first"
-    exit 1
+    log_warning "$TERMINAL_APP not found, attempting to install it..."
+
+    # Check if there's a module to install this terminal
+    if [ -f "$KITBASH_MODULES/${TERMINAL_APP}.sh" ]; then
+        log_info "Found installer module for $TERMINAL_APP, running it..."
+        if (source "$KITBASH_MODULES/${TERMINAL_APP}.sh"); then
+            log_success "$TERMINAL_APP installed successfully"
+        else
+            log_error "Failed to install $TERMINAL_APP"
+            exit 1
+        fi
+    else
+        log_error "$TERMINAL_APP not found and no installer module exists"
+        log_error "Please install $TERMINAL_APP manually or create $KITBASH_MODULES/${TERMINAL_APP}.sh"
+        exit 1
+    fi
 fi
 
 # Set terminal as default system-wide
