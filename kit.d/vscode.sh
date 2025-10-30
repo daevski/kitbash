@@ -2,6 +2,18 @@
 
 log_info "Setting up Visual Studio Code repository"
 
+# Check if VS Code is already installed
+if command -v code >/dev/null 2>&1; then
+    log_success "Visual Studio Code is already installed"
+    exit 0
+fi
+
+# Check if repository already exists
+if [ -f /etc/yum.repos.d/vscode.repo ]; then
+    log_success "Visual Studio Code repository already configured"
+    exit 0
+fi
+
 run_with_progress "importing Microsoft GPG key" sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 
 log_step "adding Visual Studio Code repository"
