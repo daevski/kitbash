@@ -6,6 +6,3 @@ kit.log
 
 # Backup files
 *.bak
-
-# Personal todo tracking
-*todo.md
