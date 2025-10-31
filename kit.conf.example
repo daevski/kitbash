@@ -41,6 +41,7 @@ _dotfiles=true                      # Clone dotfiles repo (requires _dotfiles_re
 _docker=false                        # Install Docker
 _google_chrome=true                 # Install Google Chrome
 _mounts=false                        # Configure network/local mounts
+_niri=false                          # Install Niri wayland compositor
 _ollama=false                        # Install Ollama AI runtime
 _power_never_sleep=true             # Disable automatic sleep/suspend
 _sddm=false                          # Configure SDDM login manager
