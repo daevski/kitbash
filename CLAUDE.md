@@ -626,7 +626,7 @@ sudo systemctl enable service 2>/dev/null || true
 
 1. Create `/home/david/Downloads/kitbash/kit.d/mymodule.sh`
 2. Add `_mymodule=true` to `kit.conf` and `kit.conf.example`
-3. Make script executable: `chmod +x kit.d/mymodule.sh`
+3. **Note**: Module scripts are sourced by the main script, not executed directly, so they do NOT need to be made executable with `chmod +x`
 4. Follow module template pattern (see above)
 5. Test: `./kit-start.sh mymodule`
 6. Test idempotency: Run twice, verify second run is quick
