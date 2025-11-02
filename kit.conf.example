@@ -37,9 +37,10 @@ _sudo_timeout=15
 # OPTIONAL MODULES (true/false)
 # ==============================================================================
 
+_copyq=false                         # Install CopyQ advanced clipboard manager
 _discord=false                       # Install Discord chat client from RPM Fusion
-_dotfiles=true                      # Clone dotfiles repo (requires _dotfiles_repo)
 _docker=false                        # Install Docker
+_dotfiles=true                      # Clone dotfiles repo (requires _dotfiles_repo)
 _google_chrome=true                 # Install Google Chrome
 _hyprland=false                      # Install Hyprland wayland compositor
 _mounts=false                        # Configure network/local mounts

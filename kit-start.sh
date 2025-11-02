@@ -581,8 +581,19 @@ if is_kitbash_environment && [ $# -gt 0 ] && [[ "$1" != "-*" ]]; then
                 main_setup "$@"
                 exit $?
             else
-                # Not a valid module, continue with bootstrap logic
-                log_warning "Module '$1' not found in kit.d, proceeding with bootstrap..."
+                # Not a valid module, show error and exit
+                log_error "Module '$1' not found in kit.d/"
+                echo ""
+                echo "Available modules:"
+                for script_file in "$KITBASH_MODULES"/*.sh; do
+                    if [ -f "$script_file" ]; then
+                        module_name=$(basename "$script_file" .sh)
+                        echo "  - $module_name"
+                    fi
+                done
+                echo ""
+                echo "Use '$0 --help' for more information"
+                exit 1
             fi
             ;;
     esac

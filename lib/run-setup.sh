@@ -62,17 +62,20 @@ main_setup() {
             # should run the module regardless of kit.conf booleans. That means
             # we bypass the preference-based skipping logic in
             # process_module and run the module with defaults.
+            local module_exit_code
             if [ ${#@} -gt 1 ]; then
                 # There are extra args after the module name; let process_module
                 # handle them (it will call the module with provided args).
                 process_module "$script_file" "${@:2}"
+                module_exit_code=$?
             else
                 # No override args — run the module unconditionally with
                 # default behavior (ignore kit.conf boolean values).
                 run_module_with_defaults "$requested_module" "$script_file"
+                module_exit_code=$?
             fi
 
-            return 0
+            return $module_exit_code
         fi
     fi
 

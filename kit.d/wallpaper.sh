@@ -287,6 +287,99 @@ configure_sway_desktop() {
     fi
 }
 
+# Function to configure Hyprland desktop wallpaper
+configure_hyprland_desktop() {
+    HYPRLAND_CONFIG="$HOME/.config/hypr/hyprland.conf"
+    if [ ! -f "$HYPRLAND_CONFIG" ]; then
+        log_debug "Hyprland config not found at $HYPRLAND_CONFIG"
+        return 1
+    fi
+
+    # Ensure hyprpaper is in autostart
+    if ! grep -q "^exec-once = hyprpaper" "$HYPRLAND_CONFIG"; then
+        log_debug "Adding hyprpaper to Hyprland autostart"
+        # Find the AUTOSTART section and add hyprpaper as the first exec-once
+        sed -i '/^### AUTOSTART ###$/a exec-once = hyprpaper' "$HYPRLAND_CONFIG"
+    fi
+
+    # Check if hyprpaper is being used
+    if grep -q "hyprpaper" "$HYPRLAND_CONFIG"; then
+        if [ "$_is_dual_monitor" = true ]; then
+            log_step "updating Hyprland desktop (dual monitor)"
+            log_debug "Updating Hyprland hyprpaper commands for dual monitor wallpapers"
+
+            # Update preload command
+            sed -i "s|exec = hyprctl hyprpaper preload .*|exec = hyprctl hyprpaper preload $_system_split_0\nexec = hyprctl hyprpaper preload $_system_split_1|" "$HYPRLAND_CONFIG"
+            # Update wallpaper assignments for each monitor
+            sed -i "s|exec = hyprctl hyprpaper wallpaper \"HDMI-A-1,.*\"|exec = hyprctl hyprpaper wallpaper \"HDMI-A-1,$_system_split_0\"|" "$HYPRLAND_CONFIG"
+            sed -i "s|exec = hyprctl hyprpaper wallpaper \"HDMI-A-2,.*\"|exec = hyprctl hyprpaper wallpaper \"HDMI-A-2,$_system_split_1\"|" "$HYPRLAND_CONFIG"
+
+            # Apply wallpaper immediately if in Hyprland session
+            if command -v hyprctl >/dev/null 2>&1 && hyprctl version >/dev/null 2>&1; then
+                log_debug "Applying dual monitor wallpapers via hyprctl"
+
+                # Check if hyprpaper is running
+                if pgrep -x hyprpaper >/dev/null 2>&1; then
+                    log_debug "Restarting hyprpaper daemon to ensure clean output"
+                    pkill -x hyprpaper
+                    sleep 0.2
+                fi
+
+                # Start hyprpaper with output redirected
+                log_debug "Starting hyprpaper daemon"
+                hyprpaper >/dev/null 2>&1 &
+                disown
+                # Give it a moment to start
+                sleep 0.5
+
+                # Apply wallpaper commands
+                hyprctl hyprpaper preload "$_system_split_0" 2>/dev/null || true
+                hyprctl hyprpaper preload "$_system_split_1" 2>/dev/null || true
+                hyprctl hyprpaper wallpaper "HDMI-A-1,$_system_split_0" 2>/dev/null || true
+                hyprctl hyprpaper wallpaper "HDMI-A-2,$_system_split_1" 2>/dev/null || true
+            fi
+        else
+            log_step "updating Hyprland desktop (single monitor)"
+            log_debug "Updating Hyprland hyprpaper commands for single wallpaper"
+
+            # Update preload command
+            sed -i "s|exec = hyprctl hyprpaper preload .*|exec = hyprctl hyprpaper preload $_system_wallpaper|" "$HYPRLAND_CONFIG"
+            # Update wallpaper assignments for all monitors
+            sed -i "s|exec = hyprctl hyprpaper wallpaper \"HDMI-A-1,.*\"|exec = hyprctl hyprpaper wallpaper \"HDMI-A-1,$_system_wallpaper\"|" "$HYPRLAND_CONFIG"
+            sed -i "s|exec = hyprctl hyprpaper wallpaper \"HDMI-A-2,.*\"|exec = hyprctl hyprpaper wallpaper \"HDMI-A-2,$_system_wallpaper\"|" "$HYPRLAND_CONFIG"
+
+            # Apply wallpaper immediately if in Hyprland session
+            if command -v hyprctl >/dev/null 2>&1 && hyprctl version >/dev/null 2>&1; then
+                log_debug "Applying single wallpaper via hyprctl"
+
+                # Check if hyprpaper is running
+                if pgrep -x hyprpaper >/dev/null 2>&1; then
+                    log_debug "Restarting hyprpaper daemon to ensure clean output"
+                    pkill -x hyprpaper
+                    sleep 0.2
+                fi
+
+                # Start hyprpaper with output redirected
+                log_debug "Starting hyprpaper daemon"
+                hyprpaper >/dev/null 2>&1 &
+                disown
+                # Give it a moment to start
+                sleep 0.5
+
+                # Apply wallpaper commands
+                hyprctl hyprpaper preload "$_system_wallpaper" 2>/dev/null || true
+                hyprctl hyprpaper wallpaper "HDMI-A-1,$_system_wallpaper" 2>/dev/null || true
+                hyprctl hyprpaper wallpaper "HDMI-A-2,$_system_wallpaper" 2>/dev/null || true
+            fi
+        fi
+
+        return 0
+    else
+        log_warning "No hyprpaper configuration found in Hyprland config"
+        return 1
+    fi
+}
+
 # Function to configure swaylock wallpaper
 configure_swaylock() {
     SWAYLOCK_CONFIG="$HOME/.config/swaylock/config"
@@ -321,6 +414,35 @@ configure_swaylock() {
         # Update manual lock keybinding to use simple swaylock command
         sed -i "s|\$mod+l exec swaylock[^\"]*|\$mod+l exec swaylock -f|" "$SWAY_CONFIG"
     fi
+
+    return 0
+}
+
+# Function to configure Hyprlock wallpaper
+configure_hyprlock() {
+    HYPRLOCK_CONFIG="$HOME/.config/hypr/hyprlock.conf"
+
+    if [ ! -f "$HYPRLOCK_CONFIG" ]; then
+        log_debug "Hyprlock config not found at $HYPRLOCK_CONFIG"
+        return 1
+    fi
+
+    # Choose appropriate wallpaper for lock screen
+    local lock_wallpaper
+    if [ "$_is_dual_monitor" = true ]; then
+        # Use first half of split image for lock screen (looks better than full-width stretched)
+        lock_wallpaper="$_system_split_0"
+    else
+        lock_wallpaper="$_system_wallpaper"
+    fi
+
+    log_step "updating Hyprlock configuration"
+    log_debug "Lock wallpaper: $lock_wallpaper"
+
+    # Update the path in the background block
+    sed -i "s|^\s*path = .*|    path = $lock_wallpaper|" "$HYPRLOCK_CONFIG"
+
+    return 0
 }
 
 # Function to configure SDDM wallpaper
@@ -328,7 +450,7 @@ configure_sddm() {
     SDDM_THEME_CONFIG="/usr/share/sddm/themes/custom/theme.conf"
     if [ ! -f "$SDDM_THEME_CONFIG" ]; then
         log_debug "SDDM custom theme config not found at $SDDM_THEME_CONFIG"
-        return 1
+        return 0  # Not an error if SDDM isn't installed
     fi
 
     # Choose appropriate wallpaper for login screen
@@ -357,17 +479,44 @@ configure_sddm() {
             return 1
         fi
     fi
+
+    return 0
 }
+
+# Detect which compositor is being used
+_compositor=""
+if [[ "$XDG_CURRENT_DESKTOP" == *"Hyprland"* ]] || [ -f "$HOME/.config/hypr/hyprland.conf" ]; then
+    _compositor="hyprland"
+    log_debug "Detected Hyprland compositor"
+elif [[ "$XDG_CURRENT_DESKTOP" == *"sway"* ]] || [ -f "$HOME/.config/sway/config" ]; then
+    _compositor="sway"
+    log_debug "Detected Sway compositor"
+else
+    log_warning "Could not detect compositor (Sway or Hyprland)"
+    _compositor="unknown"
+fi
 
 # Apply wallpaper to specified targets
 log_debug "Applying wallpaper to targets: ${_wallpaper_targets[*]}"
 for target in "${_wallpaper_targets[@]}"; do
     case "$target" in
         "desktop")
-            configure_sway_desktop
+            if [ "$_compositor" = "hyprland" ]; then
+                configure_hyprland_desktop
+            elif [ "$_compositor" = "sway" ]; then
+                configure_sway_desktop
+            else
+                log_warning "Unknown compositor, skipping desktop wallpaper configuration"
+            fi
             ;;
         "lock")
-            configure_swaylock
+            if [ "$_compositor" = "hyprland" ]; then
+                configure_hyprlock
+            elif [ "$_compositor" = "sway" ]; then
+                configure_swaylock
+            else
+                log_warning "Unknown compositor, skipping lock screen wallpaper configuration"
+            fi
             ;;
         "login")
             configure_sddm
@@ -392,13 +541,22 @@ if [ "$_is_dual_monitor" = false ] || [[ ! " ${_wallpaper_targets[*]} " == *" de
     fi
 fi
 
-# Reload Sway configuration if any Sway-related targets were configured
+# Reload compositor configuration if any compositor-related targets were configured
 if [[ " ${_wallpaper_targets[*]} " == *" desktop "* ]] || [[ " ${_wallpaper_targets[*]} " == *" lock "* ]]; then
-    if [ "$XDG_CURRENT_DESKTOP" = "sway" ]; then
+    if [ "$_compositor" = "sway" ]; then
         if run_with_progress "reloading Sway configuration" swaymsg reload; then
             log_debug "Sway configuration reloaded successfully"
         else
             log_debug "Failed to reload Sway (not in Sway session or swaymsg not available)"
         fi
+    elif [ "$_compositor" = "hyprland" ]; then
+        if run_with_progress "reloading Hyprland configuration" hyprctl reload; then
+            log_debug "Hyprland configuration reloaded successfully"
+        else
+            log_debug "Failed to reload Hyprland (not in Hyprland session or hyprctl not available)"
+        fi
     fi
 fi
+
+log_success "Wallpaper configured successfully"
+exit 0
