@@ -76,7 +76,7 @@ process_mount_config() {
             # CIFS/SMB share
             fs_type="cifs"
             base_options="uid=$USER,gid=$USER,file_mode=0777,dir_mode=0777,_netdev,noauto"
-            
+
             # Process custom options
             if [ -n "$options" ]; then
                 # Expand tilde in credential file paths
@@ -94,27 +94,27 @@ process_mount_config() {
                         processed_options="${processed_options},$opt"
                     fi
                 done
-                mount_options="$fs_type,$base_options$processed_options"
+                fstab_options="$base_options$processed_options"
             else
-                mount_options="$fs_type,$base_options"
+                fstab_options="$base_options"
             fi
         else
             # Assume NFS
             fs_type="nfs"
-            mount_options="nfs,defaults,_netdev,noauto"
+            # fstab expects the fstype in column 3 and options in column 4
+            fstab_options="defaults,_netdev,noauto"
             if [ -n "$options" ]; then
-                mount_options="$mount_options,$options"
+                fstab_options="$fstab_options,$options"
             fi
         fi
     else
         # Local mount
         fs_type="exfat"
         base_options="uid=$USER,gid=$USER,dmask=0022,fmask=0133,noauto"
-        
         if [ -n "$options" ]; then
-            mount_options="$fs_type,$base_options,$options"
+            fstab_options="$base_options,$options"
         else
-            mount_options="$fs_type,$base_options"
+            fstab_options="$base_options"
         fi
     fi
     
@@ -161,17 +161,17 @@ process_mount_config() {
         log_debug "found existing entry, updating with current options"
         # Remove existing entry and add new one
         sudo sed -i "\|^[[:space:]]*$source |d" /etc/fstab
-        echo "$source $mount_point $mount_options 0 0" | sudo tee -a /etc/fstab > /dev/null
+        echo "$source $mount_point $fs_type $fstab_options 0 0" | sudo tee -a /etc/fstab > /dev/null
         log_debug "updated fstab entry (with noauto for safety)"
     elif grep -q "^[[:space:]]*#.*$source " /etc/fstab 2>/dev/null; then
         log_debug "found commented entry, updating and enabling"
         # Remove commented entry and add new active one
         sudo sed -i "\|^[[:space:]]*#.*$source |d" /etc/fstab
-        echo "$source $mount_point $mount_options 0 0" | sudo tee -a /etc/fstab > /dev/null
+        echo "$source $mount_point $fs_type $fstab_options 0 0" | sudo tee -a /etc/fstab > /dev/null
         log_debug "added active fstab entry (with noauto for safety)"
     else
         log_debug "no existing entry, adding new entry"
-        echo "$source $mount_point $mount_options 0 0" | sudo tee -a /etc/fstab > /dev/null
+        echo "$source $mount_point $fs_type $fstab_options 0 0" | sudo tee -a /etc/fstab > /dev/null
         log_debug "added to fstab (with noauto for safety)"
     fi
 
