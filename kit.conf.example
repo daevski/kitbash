@@ -21,7 +21,7 @@ _wallpaper_targets=("desktop" "lock" "login")  # Where to apply wallpaper
 
 # Cursor theme and size
 _cursor='breeze_cursors'             # Cursor theme name
-_cursor_size='24'                    # Cursor size in pixels
+_cursor_size='20'                    # Cursor size in pixels
 
 # Font (name from _font_definitions or system font name)
 _font='AudioLink Mono'
@@ -37,14 +37,17 @@ _sudo_timeout=15
 # OPTIONAL MODULES (true/false)
 # ==============================================================================
 
+_discord=false                       # Install Discord chat client from RPM Fusion
 _dotfiles=true                      # Clone dotfiles repo (requires _dotfiles_repo)
 _docker=false                        # Install Docker
 _google_chrome=true                 # Install Google Chrome
+_hyprland=false                      # Install Hyprland wayland compositor
 _mounts=false                        # Configure network/local mounts
 _niri=false                          # Install Niri wayland compositor
 _ollama=false                        # Install Ollama AI runtime
 _power_never_sleep=true             # Disable automatic sleep/suspend
 _sddm=false                          # Configure SDDM login manager
+_steam=false                         # Install Steam gaming platform with RPM Fusion
 _synology=true                      # Install Synology Drive
 _vscode=true                        # Install VS Code
 
