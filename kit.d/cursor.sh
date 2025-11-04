@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Cursor theme setup script
-# Sets up Breeze cursor theme for Sway/Wayland
+# Sets up Breeze cursor theme for Sway/Niri/Wayland
 
 CURSOR_THEME="${1:-breeze_cursors}"
 CURSOR_SIZE="${2:-24}"
@@ -114,6 +114,70 @@ if [ -f "$SWAY_CONFIG" ]; then
     fi
 else
     log_debug "Sway config not found, skipping Sway configuration"
+fi
+
+# Configure for Niri if config exists
+NIRI_CONFIG="$HOME/.config/niri/config.kdl"
+if [ -f "$NIRI_CONFIG" ]; then
+    log_step "configuring cursor for Niri"
+
+    # Check if cursor block already exists
+    if grep -q "^cursor {" "$NIRI_CONFIG"; then
+        log_debug "Cursor block already exists in Niri config, updating values"
+
+        # Update existing cursor block
+        # First, check if xcursor-theme line exists
+        if grep -q '^\s*xcursor-theme' "$NIRI_CONFIG"; then
+            sed -i 's|^\s*xcursor-theme.*|    xcursor-theme "'"$CURSOR_THEME"'"|' "$NIRI_CONFIG"
+        else
+            # Add xcursor-theme after cursor { line
+            sed -i '/^cursor {/a\    xcursor-theme "'"$CURSOR_THEME"'"' "$NIRI_CONFIG"
+        fi
+
+        # Check if xcursor-size line exists
+        if grep -q '^\s*xcursor-size' "$NIRI_CONFIG"; then
+            sed -i 's|^\s*xcursor-size.*|    xcursor-size '"$CURSOR_SIZE"'|' "$NIRI_CONFIG"
+        else
+            # Add xcursor-size after xcursor-theme line
+            sed -i '/^\s*xcursor-theme/a\    xcursor-size '"$CURSOR_SIZE" "$NIRI_CONFIG"
+        fi
+
+        log_debug "Updated cursor config in Niri config"
+    else
+        log_debug "No cursor block found, adding new cursor configuration"
+
+        # Find a good insertion point (after input block if it exists, otherwise at end)
+        if grep -q "^input {" "$NIRI_CONFIG"; then
+            # Find the closing brace of the input block and add cursor config after it
+            awk '/^input \{/{p=1} p&&/^\}/{print; print "\n// Cursor configuration\ncursor {\n    xcursor-theme \"'"$CURSOR_THEME"'\"\n    xcursor-size '"$CURSOR_SIZE"'\n}"; p=0; next} 1' "$NIRI_CONFIG" > "$NIRI_CONFIG.tmp"
+            mv "$NIRI_CONFIG.tmp" "$NIRI_CONFIG"
+            log_debug "Added cursor config block after input block in Niri config"
+        else
+            # Add at the beginning of the file
+            {
+                echo "// Cursor configuration"
+                echo "cursor {"
+                echo "    xcursor-theme \"$CURSOR_THEME\""
+                echo "    xcursor-size $CURSOR_SIZE"
+                echo "}"
+                echo ""
+                cat "$NIRI_CONFIG"
+            } > "$NIRI_CONFIG.tmp"
+            mv "$NIRI_CONFIG.tmp" "$NIRI_CONFIG"
+            log_debug "Added cursor config block at beginning of Niri config"
+        fi
+    fi
+
+    # Reload Niri configuration if we're in a Niri session
+    if pgrep -x niri >/dev/null 2>&1; then
+        if run_with_progress "reloading Niri configuration" niri msg action load-config-file; then
+            log_debug "Niri configuration reloaded"
+        else
+            log_debug "Failed to reload Niri (changes will apply on next login)"
+        fi
+    fi
+else
+    log_debug "Niri config not found, skipping Niri configuration"
 fi
 
 # Verify configuration
