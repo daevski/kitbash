@@ -483,6 +483,75 @@ configure_sddm() {
     return 0
 }
 
+# Function to configure Niri desktop wallpaper
+configure_niri_desktop() {
+    NIRI_CONFIG="$HOME/.config/niri/config.kdl"
+    if [ ! -f "$NIRI_CONFIG" ]; then
+        log_debug "Niri config not found at $NIRI_CONFIG"
+        return 1
+    fi
+
+    # Niri uses swaybg for wallpapers
+    if ! command -v swaybg >/dev/null 2>&1; then
+        log_warning "swaybg not installed. Install with: sudo dnf install swaybg"
+        return 1
+    fi
+
+    if [ "$_is_dual_monitor" = true ]; then
+        log_step "updating Niri desktop (dual monitor)"
+        log_debug "Updating Niri swaybg command for dual monitor wallpapers"
+
+        # For dual monitor, we use the full wallpaper image
+        # swaybg will stretch it across all outputs
+        local wallpaper_cmd="pkill swaybg; swaybg -i $_system_wallpaper -m fill"
+
+        # Update or add swaybg spawn command in Niri config
+        if grep -q "spawn.*swaybg" "$NIRI_CONFIG"; then
+            sed -i "s|spawn.*swaybg.*|spawn-sh-at-startup \"$wallpaper_cmd\"|" "$NIRI_CONFIG"
+        else
+            # Add after waybar spawn line
+            sed -i "/spawn.*waybar/a \\
+\\
+// Wallpaper background daemon\\
+spawn-sh-at-startup \"$wallpaper_cmd\"" "$NIRI_CONFIG"
+        fi
+
+        # Apply wallpaper immediately if in Niri session
+        if command -v niri >/dev/null 2>&1 && pgrep -x niri >/dev/null 2>&1; then
+            log_debug "Applying dual monitor wallpaper via swaybg"
+            pkill swaybg 2>/dev/null || true
+            swaybg -i "$_system_wallpaper" -m fill >/dev/null 2>&1 &
+            disown
+        fi
+    else
+        log_step "updating Niri desktop (single monitor)"
+        log_debug "Updating Niri swaybg command for single wallpaper"
+
+        local wallpaper_cmd="pkill swaybg; swaybg -i $_system_wallpaper -m fill"
+
+        # Update or add swaybg spawn command in Niri config
+        if grep -q "spawn.*swaybg" "$NIRI_CONFIG"; then
+            sed -i "s|spawn.*swaybg.*|spawn-sh-at-startup \"$wallpaper_cmd\"|" "$NIRI_CONFIG"
+        else
+            # Add after waybar spawn line
+            sed -i "/spawn.*waybar/a \\
+\\
+// Wallpaper background daemon\\
+spawn-sh-at-startup \"$wallpaper_cmd\"" "$NIRI_CONFIG"
+        fi
+
+        # Apply wallpaper immediately if in Niri session
+        if command -v niri >/dev/null 2>&1 && pgrep -x niri >/dev/null 2>&1; then
+            log_debug "Applying single wallpaper via swaybg"
+            pkill swaybg 2>/dev/null || true
+            swaybg -i "$_system_wallpaper" -m fill >/dev/null 2>&1 &
+            disown
+        fi
+    fi
+
+    return 0
+}
+
 # Detect which compositor is being used
 _compositor=""
 if [[ "$XDG_CURRENT_DESKTOP" == *"Hyprland"* ]] || [ -f "$HOME/.config/hypr/hyprland.conf" ]; then
@@ -491,8 +560,11 @@ if [[ "$XDG_CURRENT_DESKTOP" == *"Hyprland"* ]] || [ -f "$HOME/.config/hypr/hypr
 elif [[ "$XDG_CURRENT_DESKTOP" == *"sway"* ]] || [ -f "$HOME/.config/sway/config" ]; then
     _compositor="sway"
     log_debug "Detected Sway compositor"
+elif [[ "$XDG_CURRENT_DESKTOP" == *"niri"* ]] || [ -f "$HOME/.config/niri/config.kdl" ]; then
+    _compositor="niri"
+    log_debug "Detected Niri compositor"
 else
-    log_warning "Could not detect compositor (Sway or Hyprland)"
+    log_warning "Could not detect compositor (Sway, Hyprland, or Niri)"
     _compositor="unknown"
 fi
 
@@ -505,6 +577,8 @@ for target in "${_wallpaper_targets[@]}"; do
                 configure_hyprland_desktop
             elif [ "$_compositor" = "sway" ]; then
                 configure_sway_desktop
+            elif [ "$_compositor" = "niri" ]; then
+                configure_niri_desktop
             else
                 log_warning "Unknown compositor, skipping desktop wallpaper configuration"
             fi
@@ -514,6 +588,8 @@ for target in "${_wallpaper_targets[@]}"; do
                 configure_hyprlock
             elif [ "$_compositor" = "sway" ]; then
                 configure_swaylock
+            elif [ "$_compositor" = "niri" ]; then
+                configure_swaylock  # Niri can use swaylock too
             else
                 log_warning "Unknown compositor, skipping lock screen wallpaper configuration"
             fi
@@ -555,6 +631,9 @@ if [[ " ${_wallpaper_targets[*]} " == *" desktop "* ]] || [[ " ${_wallpaper_targ
         else
             log_debug "Failed to reload Hyprland (not in Hyprland session or hyprctl not available)"
         fi
+    elif [ "$_compositor" = "niri" ]; then
+        log_debug "Niri wallpaper applied directly via swaybg, no reload needed"
+        # Niri config changes require restart, but wallpaper is already applied
     fi
 fi
 

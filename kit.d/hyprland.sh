@@ -3,7 +3,7 @@
 # Module: hyprland.sh
 # Purpose: Install Hyprland dynamic tiling Wayland compositor and ecosystem tools
 # Hyprland provides smooth animations and i3/Sway-like tiling
-# Includes: hyprland, hyprlock, hypridle, hyprpaper
+# Includes: hyprland, hyprlock, hypridle, hyprpaper, hyprexpo
 
 log_info "Setting up Hyprland compositor and ecosystem"
 
@@ -19,6 +19,7 @@ fi
 HYPRLOCK_INSTALLED=false
 HYPRIDLE_INSTALLED=false
 HYPRPAPER_INSTALLED=false
+HYPREXPO_INSTALLED=false
 
 if command -v hyprlock >/dev/null 2>&1; then
     log_debug "hyprlock already installed"
@@ -35,8 +36,13 @@ if command -v hyprpaper >/dev/null 2>&1; then
     HYPRPAPER_INSTALLED=true
 fi
 
+if rpm -q hyprland-plugin-hyprexpo >/dev/null 2>&1; then
+    log_debug "hyprexpo already installed"
+    HYPREXPO_INSTALLED=true
+fi
+
 # If everything is installed, exit early
-if $HYPRLAND_INSTALLED && $HYPRLOCK_INSTALLED && $HYPRIDLE_INSTALLED && $HYPRPAPER_INSTALLED; then
+if $HYPRLAND_INSTALLED && $HYPRLOCK_INSTALLED && $HYPRIDLE_INSTALLED && $HYPRPAPER_INSTALLED && $HYPREXPO_INSTALLED; then
     log_success "Hyprland and all ecosystem tools are already installed"
     exit 0
 fi
@@ -56,7 +62,7 @@ fi
 
 # Enable COPR repository for Hyprland ecosystem tools if needed
 COPR_ENABLED=false
-if ! $HYPRLOCK_INSTALLED || ! $HYPRIDLE_INSTALLED || ! $HYPRPAPER_INSTALLED; then
+if ! $HYPRLOCK_INSTALLED || ! $HYPRIDLE_INSTALLED || ! $HYPRPAPER_INSTALLED || ! $HYPREXPO_INSTALLED; then
     log_step "checking for solopasha/hyprland COPR repository"
     if ! dnf copr list 2>/dev/null | grep -q "copr:copr.fedorainfracloud.org:solopasha:hyprland"; then
         log_step "enabling solopasha/hyprland COPR repository"
@@ -94,7 +100,7 @@ if ! $HYPRLAND_INSTALLED; then
 fi
 
 # Install ecosystem tools from COPR if needed
-if ! $HYPRLOCK_INSTALLED || ! $HYPRIDLE_INSTALLED || ! $HYPRPAPER_INSTALLED; then
+if ! $HYPRLOCK_INSTALLED || ! $HYPRIDLE_INSTALLED || ! $HYPRPAPER_INSTALLED || ! $HYPREXPO_INSTALLED; then
     if $COPR_ENABLED; then
         # Install hyprlock if not installed
         if ! $HYPRLOCK_INSTALLED; then
@@ -128,6 +134,17 @@ if ! $HYPRLOCK_INSTALLED || ! $HYPRIDLE_INSTALLED || ! $HYPRPAPER_INSTALLED; the
                 log_debug "hyprpaper installed successfully"
             fi
         fi
+
+        # Install hyprexpo if not installed
+        if ! $HYPREXPO_INSTALLED; then
+            log_step "installing hyprexpo (workspace overview plugin) from COPR"
+            if ! run_with_progress "installing hyprexpo package" \
+                sudo dnf install -y hyprland-plugin-hyprexpo; then
+                log_warning "Failed to install hyprexpo from COPR"
+            else
+                log_debug "hyprexpo installed successfully"
+            fi
+        fi
     fi
 fi
 
@@ -137,6 +154,7 @@ command -v Hyprland >/dev/null 2>&1 || MISSING_TOOLS+=("hyprland")
 command -v hyprlock >/dev/null 2>&1 || MISSING_TOOLS+=("hyprlock")
 command -v hypridle >/dev/null 2>&1 || MISSING_TOOLS+=("hypridle")
 command -v hyprpaper >/dev/null 2>&1 || MISSING_TOOLS+=("hyprpaper")
+rpm -q hyprland-plugin-hyprexpo >/dev/null 2>&1 || MISSING_TOOLS+=("hyprexpo")
 
 if [ ${#MISSING_TOOLS[@]} -gt 0 ]; then
     log_warning "Some tools could not be installed: ${MISSING_TOOLS[*]}"

@@ -36,7 +36,7 @@ load_config() {
         return $KIT_EXIT_CONFIG_MISSING
     fi
 
-    echo "[DEBUG] Loading configuration from: $KITBASH_CONFIG" >&2
+    log_debug "Loading configuration from: $KITBASH_CONFIG"
     source "$KITBASH_CONFIG"
     return $KIT_EXIT_SUCCESS
 }
@@ -52,7 +52,7 @@ validate_config() {
         "_editor"
     )
 
-    echo "[DEBUG] Validating configuration..." >&2
+    log_debug "Validating configuration..."
 
     for pref in "${required_prefs[@]}"; do
         if [ -z "${!pref}" ]; then
@@ -60,7 +60,7 @@ validate_config() {
             echo "  Please define $pref in $KITBASH_CONFIG" >&2
             errors=$((errors + 1))
         else
-            echo "[DEBUG] ✓ $pref = ${!pref}" >&2
+            log_debug "✓ $pref = ${!pref}"
         fi
     done
 
@@ -87,7 +87,7 @@ validate_config() {
         return $KIT_EXIT_CONFIG_INVALID
     fi
 
-    echo "[DEBUG] Configuration validation passed" >&2
+    log_debug "Configuration validation passed"
     return $KIT_EXIT_SUCCESS
 }
 
