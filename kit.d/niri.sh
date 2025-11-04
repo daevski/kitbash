@@ -27,11 +27,10 @@ if command -v hyprlock >/dev/null 2>&1; then
     HYPRLOCK_INSTALLED=true
 fi
 
-# If everything is already installed and configured, exit early
+# If everything is already installed and service is enabled, exit early
 if $NIRI_INSTALLED && $HYPRIDLE_INSTALLED && $HYPRLOCK_INSTALLED && \
-   [ -f "$HOME/.config/hypr/hypridle.conf" ] && \
-   [ -f "$HOME/.config/hypr/hyprlock.conf" ]; then
-    log_success "Niri and lock/idle tools are already installed and configured"
+   systemctl --user is-enabled hypridle >/dev/null 2>&1; then
+    log_success "Niri and lock/idle tools are already installed"
     exit 0
 fi
 
@@ -107,131 +106,6 @@ if ! $HYPRIDLE_INSTALLED || ! $HYPRLOCK_INSTALLED; then
     log_debug "hypridle and hyprlock installed successfully"
 fi
 
-# Create config directory
-log_step "setting up configuration files"
-mkdir -p "$HOME/.config/hypr"
-
-# Install hypridle config
-if [ ! -f "$HOME/.config/hypr/hypridle.conf" ]; then
-    log_debug "creating hypridle configuration"
-    cat > "$HOME/.config/hypr/hypridle.conf" << 'EOF'
-# Hypridle Configuration
-# Idle management daemon - works across Hyprland, Niri, and Sway
-
-general {
-    lock_cmd = pidof hyprlock || hyprlock       # avoid starting multiple hyprlock instances
-    before_sleep_cmd = loginctl lock-session    # lock before suspend
-    after_sleep_cmd = sh -c 'if command -v hyprctl >/dev/null 2>&1; then hyprctl dispatch dpms on; elif command -v niri >/dev/null 2>&1; then niri msg action power-on-monitors; elif command -v swaymsg >/dev/null 2>&1; then swaymsg "output * dpms on"; fi'
-}
-
-# Lock screen after 5 minutes (300 seconds)
-listener {
-    timeout = 300
-    on-timeout = loginctl lock-session
-}
-
-# Turn off monitors after 10 minutes (600 seconds)
-listener {
-    timeout = 600
-    on-timeout = sh -c 'if command -v hyprctl >/dev/null 2>&1; then hyprctl dispatch dpms off; elif command -v niri >/dev/null 2>&1; then niri msg action power-off-monitors; elif command -v swaymsg >/dev/null 2>&1; then swaymsg "output * dpms off"; fi'
-    on-resume = sh -c 'if command -v hyprctl >/dev/null 2>&1; then hyprctl dispatch dpms on; elif command -v niri >/dev/null 2>&1; then niri msg action power-on-monitors; elif command -v swaymsg >/dev/null 2>&1; then swaymsg "output * dpms on"; fi'
-}
-EOF
-else
-    log_debug "hypridle.conf already exists, skipping"
-fi
-
-# Install hyprlock config
-if [ ! -f "$HOME/.config/hypr/hyprlock.conf" ]; then
-    log_debug "creating hyprlock configuration"
-    cat > "$HOME/.config/hypr/hyprlock.conf" << 'EOF'
-# Hyprlock Configuration
-# Screen locker for Hyprland
-
-# General settings
-general {
-    disable_loading_bar = false
-    hide_cursor = true
-    grace = 0
-    no_fade_in = false
-}
-
-# Background (Catppuccin Frappé base color)
-background {
-    monitor =
-    path = /usr/share/backgrounds/wallpaper.jpg
-    blur_passes = 2
-    blur_size = 7
-    noise = 0.0117
-    contrast = 0.8916
-    brightness = 0.8172
-    vibrancy = 0.1696
-    vibrancy_darkness = 0.0
-}
-
-# Input field
-input-field {
-    monitor =
-    size = 300, 50
-    outline_thickness = 2
-    dots_size = 0.2
-    dots_spacing = 0.35
-    dots_center = true
-    outer_color = rgb(ca9ee6)  # lavender
-    inner_color = rgb(303446)  # base
-    font_color = rgb(c6d0f5)   # text
-    fade_on_empty = false
-    placeholder_text = <span foreground="##c6d0f5">Enter Password...</span>
-    hide_input = false
-    position = 0, -120
-    halign = center
-    valign = center
-    check_color = rgb(a6d189)  # green
-    fail_color = rgb(e78284)   # red
-    fail_text = <span foreground="##e78284">Authentication Failed</span>
-    capslock_color = rgb(ef9f76)  # peach
-}
-
-# Time label
-label {
-    monitor =
-    text = cmd[update:1000] echo "$(date +'%H:%M')"
-    color = rgb(c6d0f5)  # text
-    font_size = 120
-    font_family = AudioLink Mono
-    position = 0, 300
-    halign = center
-    valign = center
-}
-
-# Date label
-label {
-    monitor =
-    text = cmd[update:60000] echo "$(date +'%A, %B %d')"
-    color = rgb(c6d0f5)  # text
-    font_size = 24
-    font_family = AudioLink Mono
-    position = 0, 200
-    halign = center
-    valign = center
-}
-
-# User label
-label {
-    monitor =
-    text = $USER
-    color = rgb(babbf1)  # lavender
-    font_size = 18
-    font_family = AudioLink Mono
-    position = 0, -200
-    halign = center
-    valign = center
-}
-EOF
-else
-    log_debug "hyprlock.conf already exists, skipping"
-fi
-
 # Enable and start hypridle service
 log_step "enabling hypridle service"
 if ! systemctl --user is-enabled hypridle >/dev/null 2>&1; then
@@ -248,6 +122,7 @@ if ! systemctl --user is-active hypridle >/dev/null 2>&1; then
     fi
 fi
 
-log_success "Niri installation and configuration completed successfully"
+log_success "Niri installation completed successfully"
+log_info "Note: Configure hypridle.conf and hyprlock.conf in ~/.config/hypr/"
 log_info "Note: hypridle may show warnings when not in Hyprland - this is expected"
 exit 0
