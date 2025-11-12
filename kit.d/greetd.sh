@@ -7,15 +7,15 @@
 log_info "Setting up greetd display manager with gtkgreet"
 
 # Check if greetd is already installed
-if command -v greetd >/dev/null 2>&1 && command -v gtkgreet >/dev/null 2>&1; then
-    log_success "greetd and gtkgreet are already installed"
+if command -v greetd >/dev/null 2>&1 && command -v gtkgreet >/dev/null 2>&1 && command -v cage >/dev/null 2>&1; then
+    log_success "greetd, gtkgreet, and cage are already installed"
     exit 0
 fi
 
-# Install greetd and gtkgreet
-log_step "installing greetd and gtkgreet packages"
-if ! run_with_progress "installing packages" sudo dnf install -y greetd gtkgreet; then
-    log_error "Failed to install greetd/gtkgreet"
+# Install greetd, gtkgreet, and cage (Wayland compositor wrapper)
+log_step "installing greetd, gtkgreet, and cage packages"
+if ! run_with_progress "installing packages" sudo dnf install -y greetd gtkgreet cage; then
+    log_error "Failed to install greetd/gtkgreet/cage"
     exit $KIT_EXIT_MODULE_FAILED
 fi
 
@@ -30,7 +30,7 @@ sudo tee "$GREETD_CONFIG" > /dev/null << 'EOF'
 vt = 1
 
 [default_session]
-command = "gtkgreet -l -s /usr/share/wayland-sessions"
+command = "cage -s -- gtkgreet -l"
 user = "greeter"
 EOF
 
