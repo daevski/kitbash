@@ -26,6 +26,9 @@ _cursor_size='20'                    # Cursor size in pixels
 # Font (name from _font_definitions or system font name)
 _font='AudioLink Mono'
 
+# GTK Theme (catppuccin or theme name)
+_theme='catppuccin'
+
 # ==============================================================================
 # SYSTEM SETTINGS
 # ==============================================================================
@@ -46,6 +49,7 @@ _greetd=false                        # Install greetd+gtkgreet display manager (
 _hyprland=false                      # Install Hyprland wayland compositor
 _mounts=false                        # Configure network/local mounts
 _niri=false                          # Install Niri wayland compositor
+_obsidian=false                      # Install Obsidian markdown editor
 _ollama=false                        # Install Ollama AI runtime
 _power_never_sleep=true             # Disable automatic sleep/suspend
 _sddm=false                          # Configure SDDM login manager
@@ -94,4 +98,6 @@ _wallpaper_definitions=(
 _font_definitions=(
     # Example (must be a .zip file containing .ttf or .otf files):
     "AudioLink Mono:https://audiolink.dev/gallery/AudioLinkMono.zip"
+    "Bedstead:https://bjh21.me.uk/bedstead/bedstead-3.252.zip"
+    "Chivo:https://www.omnibus-type.com/wp-content/uploads/Chivo.zip"
 )
