@@ -549,13 +549,14 @@ main() {
     echo "  $KITBASH_LIB/run-setup.sh help         # Show available modules"
 }
 
-# Check if we're in an existing dotfiles environment
+# Check if we're in an existing kitbash installation (not necessarily configured)
 is_kitbash_environment() {
-    # Check if the key files exist that indicate we're already set up
-    if [ -f "$KITBASH_CONFIG" ] && [ -d "$KITBASH_MODULES" ] && [ -f "$KITBASH_LIB/run-setup.sh" ]; then
-        return 0  # Yes, we're in a kitbash environment
+    # Check if the key files exist that indicate kitbash is installed
+    # Note: kit.conf is NOT required - modules can run without it
+    if [ -d "$KITBASH_MODULES" ] && [ -f "$KITBASH_LIB/run-setup.sh" ]; then
+        return 0  # Yes, we have a kitbash installation
     else
-        return 1  # No, we need to bootstrap
+        return 1  # No, we need to bootstrap/install
     fi
 }
 

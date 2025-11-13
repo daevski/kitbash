@@ -21,10 +21,23 @@ main_setup() {
         return $KIT_EXIT_ERROR
     fi
 
-    # Check if we're running a specific module (config is optional for module mode)
+    # Check if we're running a specific module or help (config is optional)
     # vs running full setup (config is required)
-    if [ $# -gt 0 ] && [ -f "$KITBASH_MODULES/$1.sh" ]; then
-        export KITBASH_REQUIRE_CONFIG=false
+    if [ $# -gt 0 ]; then
+        case "$1" in
+            help|-h|--help)
+                # Help command doesn't need config
+                export KITBASH_REQUIRE_CONFIG=false
+                ;;
+            *)
+                # Check if it's a module
+                if [ -f "$KITBASH_MODULES/$1.sh" ]; then
+                    export KITBASH_REQUIRE_CONFIG=false
+                else
+                    export KITBASH_REQUIRE_CONFIG=true
+                fi
+                ;;
+        esac
     else
         export KITBASH_REQUIRE_CONFIG=true
     fi
