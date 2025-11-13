@@ -76,13 +76,13 @@ show_usage() {
                 pref_value="${!pref_var}"
                 echo "  - $module_name (preference: $pref_var = $pref_value)"
             else
-                echo "  - $module_name (no preference variable, therefore will be skipped)"
+                echo "  - $module_name"
             fi
         fi
     done
     echo ""
     echo "Examples:"
-    echo "  $0 google_chrome           Run the google_chrome module"
-    echo "  $0 wallpaper ~/Pictures/my-wallpaper.jpg"
-    echo "  $0 hostname mycomputer"
+    echo "  $(basename "$0") google_chrome           Run the google_chrome module"
+    echo "  $(basename "$0") wallpaper ~/Pictures/my-wallpaper.jpg"
+    echo "  $(basename "$0") hostname mycomputer"
 }
