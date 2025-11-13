@@ -57,7 +57,18 @@ load_config() {
 }
 
 # Validate required configuration variables
+# Set KITBASH_REQUIRE_CONFIG=false to skip validation (for module mode)
 validate_config() {
+    local require_config="${KITBASH_REQUIRE_CONFIG:-true}"
+
+    # Skip validation if config is not required (module mode)
+    if [ "$require_config" = "false" ]; then
+        if command -v log_debug >/dev/null 2>&1; then
+            log_debug "Skipping configuration validation (not required for this operation)"
+        fi
+        return $KIT_EXIT_SUCCESS
+    fi
+
     local errors=0
 
     # Required preferences that must be set
