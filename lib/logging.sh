@@ -99,7 +99,7 @@ run_quiet() {
     return $exit_code
 }
 
-# Run a command with progress indicator (spinner or dots)
+# Run a command with progress indicator (spinner)
 # Usage: run_with_progress "description" command args...
 run_with_progress() {
     local description="$1"
@@ -111,15 +111,34 @@ run_with_progress() {
 
     local output
     local exit_code
+    local spinner_pid
+
+    # Start spinner in background
+    (
+        local spinner_chars='|/-\'
+        local i=0
+        while true; do
+            printf "\b${spinner_chars:$i:1}"
+            i=$(( (i + 1) % 4 ))
+            sleep 0.1
+        done
+    ) &
+    spinner_pid=$!
 
     # Capture both stdout and stderr
     if output=$("$@" 2>&1); then
         exit_code=0
+        kill $spinner_pid 2>/dev/null
+        wait $spinner_pid 2>/dev/null
+        printf "\b"
         echo -e "${_LOG_COLOR_GREEN}done${_LOG_COLOR_RESET}"
         log_debug "Command succeeded"
         [ -n "$output" ] && log_debug "Output: $output"
     else
         exit_code=$?
+        kill $spinner_pid 2>/dev/null
+        wait $spinner_pid 2>/dev/null
+        printf "\b"
         echo -e "${_LOG_COLOR_RED}failed${_LOG_COLOR_RESET}"
         log_debug "Command failed with exit code: $exit_code"
         [ -n "$output" ] && log_debug "Output: $output"
