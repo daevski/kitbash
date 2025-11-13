@@ -10,30 +10,42 @@ fi
 
 # Load configuration file
 # Requires kit.conf to exist - will NOT fall back to kit.conf.example
+# Set KITBASH_REQUIRE_CONFIG=false to make config optional (for module mode)
 load_config() {
+    local require_config="${KITBASH_REQUIRE_CONFIG:-true}"
+
     # Assert that kit.conf exists
     if [ ! -f "$KITBASH_CONFIG" ]; then
-        echo "ERROR: Configuration file not found: $KITBASH_CONFIG" >&2
-        echo "" >&2
-        echo "Kitbash requires a customized configuration file to run." >&2
-        echo "" >&2
-
-        # Check if example exists to provide helpful guidance
-        if [ -f "$KITBASH_CONFIG_EXAMPLE" ]; then
-            echo "To get started, copy the example configuration and customize it:" >&2
-            echo "  cp $KITBASH_CONFIG_EXAMPLE $KITBASH_CONFIG" >&2
+        # Only error out if config is required (bootstrap/setup mode)
+        if [ "$require_config" = "true" ]; then
+            echo "ERROR: Configuration file not found: $KITBASH_CONFIG" >&2
             echo "" >&2
-            echo "Then edit $KITBASH_CONFIG to match your preferences:" >&2
-            echo "  - Set your hostname (_hostname)" >&2
-            echo "  - Choose your terminal emulator (_terminal)" >&2
-            echo "  - Choose your editor (_editor)" >&2
-            echo "  - Enable/disable optional modules" >&2
+            echo "Kitbash requires a customized configuration file to run." >&2
+            echo "" >&2
+
+            # Check if example exists to provide helpful guidance
+            if [ -f "$KITBASH_CONFIG_EXAMPLE" ]; then
+                echo "To get started, copy the example configuration and customize it:" >&2
+                echo "  cp $KITBASH_CONFIG_EXAMPLE $KITBASH_CONFIG" >&2
+                echo "" >&2
+                echo "Then edit $KITBASH_CONFIG to match your preferences:" >&2
+                echo "  - Set your hostname (_hostname)" >&2
+                echo "  - Choose your terminal emulator (_terminal)" >&2
+                echo "  - Choose your editor (_editor)" >&2
+                echo "  - Enable/disable optional modules" >&2
+            else
+                echo "ERROR: Template file also missing: $KITBASH_CONFIG_EXAMPLE" >&2
+                echo "Please ensure you're running kitbash from the correct directory." >&2
+            fi
+            echo "" >&2
+            return $KIT_EXIT_CONFIG_MISSING
         else
-            echo "ERROR: Template file also missing: $KITBASH_CONFIG_EXAMPLE" >&2
-            echo "Please ensure you're running kitbash from the correct directory." >&2
+            # Config optional - just warn and continue
+            if command -v log_debug >/dev/null 2>&1; then
+                log_debug "Configuration file not found, but not required for this operation"
+            fi
+            return $KIT_EXIT_SUCCESS
         fi
-        echo "" >&2
-        return $KIT_EXIT_CONFIG_MISSING
     fi
 
     # Use log_debug if available (logging may not be loaded yet)

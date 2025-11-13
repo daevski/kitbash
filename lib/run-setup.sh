@@ -21,11 +21,22 @@ main_setup() {
         return $KIT_EXIT_ERROR
     fi
 
+    # Check if we're running a specific module (config is optional for module mode)
+    # vs running full setup (config is required)
+    if [ $# -gt 0 ] && [ -f "$KITBASH_MODULES/$1.sh" ]; then
+        export KITBASH_REQUIRE_CONFIG=false
+    else
+        export KITBASH_REQUIRE_CONFIG=true
+    fi
+
     # Load configuration management library
     source "$KITBASH_LIB/config.sh"
     if ! init_config; then
-        echo "ERROR: Failed to load configuration" >&2
-        return $?  # Propagate specific config error code
+        # Only error if config was required
+        if [ "$KITBASH_REQUIRE_CONFIG" = "true" ]; then
+            echo "ERROR: Failed to load configuration" >&2
+            return $?  # Propagate specific config error code
+        fi
     fi
 
     # Set legacy variables for backwards compatibility (temporary)
