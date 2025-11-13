@@ -8,13 +8,9 @@ alias_name="${KITBASH_ALIAS:-kit}"
 set_alias_kit() {
     local alias_path="$1"
     if grep -q "${alias_name}.*kit-start.sh" "$HOME/.bashrc" 2>/dev/null; then
-        # Update existing alias
         sed -i.bak "/${alias_name}.*kit-start.sh/c\alias ${alias_name}=$alias_path" "$HOME/.bashrc"
-        echo "Updated existing '${alias_name}' alias in ~/.bashrc"
     else
-        # Add new alias
         echo "alias ${alias_name}=$alias_path" >> "$HOME/.bashrc"
-        echo "Added '${alias_name}' alias to ~/.bashrc"
     fi
 }
 
