@@ -25,7 +25,7 @@ install_kit() {
         rm -rf "$target_dir"
     fi
 
-    git clone https://github.com/$gh_username/$repo_name "$target_dir"
+    git clone -q https://github.com/$gh_username/$repo_name "$target_dir"
     chmod +x "$target_dir/kit-start.sh"
 
     # Set up the alias
