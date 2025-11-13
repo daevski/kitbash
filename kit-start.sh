@@ -398,12 +398,6 @@ run_setup() {
     fi
 }
 
-# Cleanup function
-cleanup() {
-    log_info "Cleaning up temporary files..."
-    # Add cleanup logic if needed
-}
-
 # Main execution
 main() {
     # If first argument matches a module in kit.d/, delegate immediately
@@ -559,9 +553,6 @@ is_kitbash_environment() {
         return 1  # No, we need to bootstrap/install
     fi
 }
-
-# Handle script interruption
-trap cleanup EXIT
 
 # Check if we should delegate to existing environment first
 if is_kitbash_environment && [ $# -gt 0 ]; then
