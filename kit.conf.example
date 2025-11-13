@@ -16,7 +16,7 @@ _editor='vim'           # Default editor (vim, nano, code, etc.)
 # ==============================================================================
 
 # Wallpaper (can be local path or predefined name from _wallpaper_definitions)
-_wallpaper='minimal-colored-circles'
+_wallpaper='neon-blue-circle'
 _wallpaper_targets=("desktop" "lock" "login")  # Where to apply wallpaper
 
 # Cursor theme and size
@@ -25,9 +25,6 @@ _cursor_size='20'                    # Cursor size in pixels
 
 # Font (name from _font_definitions or system font name)
 _font='AudioLink Mono'
-
-# GTK Theme (catppuccin or theme name)
-_theme='catppuccin'
 
 # ==============================================================================
 # SYSTEM SETTINGS
@@ -40,16 +37,13 @@ _sudo_timeout=15
 # OPTIONAL MODULES (true/false)
 # ==============================================================================
 
-_copyq=false                         # Install CopyQ advanced clipboard manager
 _discord=false                       # Install Discord chat client from RPM Fusion
-_docker=false                        # Install Docker
 _dotfiles=true                      # Clone dotfiles repo (requires _dotfiles_repo)
+_docker=false                        # Install Docker
+_gnome_boxes=false                   # Install GNOME Boxes virtualization
 _google_chrome=true                 # Install Google Chrome
-_greetd=false                        # Install greetd+gtkgreet display manager (Wayland-native)
-_hyprland=false                      # Install Hyprland wayland compositor
 _mounts=false                        # Configure network/local mounts
-_niri=false                          # Install Niri wayland compositor
-_obsidian=false                      # Install Obsidian markdown editor
+_obsidian=true                       # Install Obsidian markdown editor
 _ollama=false                        # Install Ollama AI runtime
 _power_never_sleep=true             # Disable automatic sleep/suspend
 _sddm=false                          # Configure SDDM login manager
@@ -71,7 +65,7 @@ _vscode=true                        # Install VS Code
 # Format: "remote_share:mount_point:home_symlink,option1=value,option2=value"
 _network_mounts=(
     # CIFS/SMB example:
-    # "//server/share:/mnt/myserver:~/myserver,credfile=~/.smbcreds"
+    "//nimbus/code:/mnt/nimbus/code:~/development,credfile=~/.smbcreds"
     #
     # NFS example (no credentials):
     # "nfsserver:/export/path:/mnt/nfs:~/nfs"
@@ -91,7 +85,7 @@ _local_media=(
 # Wallpaper definitions (name:url pairs)
 _wallpaper_definitions=(
     # Example:
-    "minimal-colored-circles:https://www.pxfuel.com/en/desktop-wallpaper-qjdxx/download/1920x1080"
+    "neon-blue-circle:https://i.imgur.com/xeYkH88.jpeg"
 )
 
 # Font definitions (name:url pairs for downloadable fonts)
