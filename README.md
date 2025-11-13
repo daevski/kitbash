@@ -83,6 +83,20 @@ _font_definitions=(
 )
 ```
 
+## Module Execution Order
+
+Modules run in a tiered order to ensure dependencies are satisfied:
+
+- **Tier 0**: Dotfiles (runs first to deploy configs)
+- **Tier 1**: System fundamentals (hostname, sudo, power management)
+- **Tier 2**: Package repositories (Chrome, VS Code, Steam, etc.)
+- **Tier 3**: Core user tools (terminal, editor, fonts)
+- **Tier 4**: Window managers and display (Niri, Hyprland, greetd)
+- **Tier 5**: Appearance and theming (GTK theme, cursor, wallpaper)
+- **Tier 6**: System services (Docker, Ollama, mounts)
+
+This ordering ensures, for example, that dotfiles are deployed before window managers look for their configs, and that terminal apps are installed before setting the default terminal.
+
 ## Available Modules
 
 Kitbash includes the following modules in `kit.d/`:

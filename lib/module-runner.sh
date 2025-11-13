@@ -147,6 +147,23 @@ process_module() {
     execute_module "$module_name" "$script_file" "${execution_info[@]}"
 }
 
+# Helper function to extract tier number from module header
+get_module_tier() {
+    local script_file="$1"
+    local tier_line
+
+    # Extract "# Tier: N" from module header (first 10 lines)
+    tier_line=$(head -n 10 "$script_file" 2>/dev/null | grep -i "^# Tier:" | head -n 1)
+
+    if [ -n "$tier_line" ]; then
+        # Extract just the number (first digit after "Tier:")
+        echo "$tier_line" | grep -oP 'Tier:\s*\K\d+' || echo "999"
+    else
+        # No tier found - put at end
+        echo "999"
+    fi
+}
+
 # Function to discover and run available modules
 run_discovered_modules() {
     validate_required_prefs
@@ -154,9 +171,28 @@ run_discovered_modules() {
     log_info "Discovering available modules in $_scripts"
     log_debug "Scripts directory: $_scripts"
 
-    # Find all .sh files in the scripts directory (excluding _lib)
+    # Collect all module files with their tier numbers
+    declare -a module_list
     for script_file in "$_scripts"*.sh; do
-        [ -f "$script_file" ] && process_module "$script_file"
+        if [ -f "$script_file" ]; then
+            tier=$(get_module_tier "$script_file")
+            module_name=$(basename "$script_file" .sh)
+            # Format: "tier:filepath" for sorting
+            module_list+=("${tier}:${script_file}")
+            log_debug "Module '$module_name' assigned to tier $tier"
+        fi
+    done
+
+    # Sort modules by tier number
+    IFS=$'\n' sorted_modules=($(sort -t: -k1 -n <<<"${module_list[*]}"))
+    unset IFS
+
+    log_info "Executing modules in tier order"
+
+    # Process modules in sorted order
+    for entry in "${sorted_modules[@]}"; do
+        script_file="${entry#*:}"  # Remove tier prefix
+        process_module "$script_file"
     done
 
     log_success "All modules completed"
