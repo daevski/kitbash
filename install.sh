@@ -1,10 +1,17 @@
 gh_username=daevski
 repo_name=kitbash
 working_dir="$HOME/Downloads"
+target_dir="$working_dir/$repo_name"
 
-git clone https://github.com/$gh_username/$repo_name $working_dir/$repo_name
-chmod +x $working_dir/$repo_name/kit-start.sh
-echo "alias kit=$working_dir/$repo_name/kit-start.sh" >> $HOME/.bashrc
+# Remove existing directory if it exists
+if [ -d "$target_dir" ]; then
+    echo "Removing existing $target_dir directory..."
+    rm -rf "$target_dir"
+fi
+
+git clone https://github.com/$gh_username/$repo_name "$target_dir"
+chmod +x "$target_dir/kit-start.sh"
+echo "alias kit=$target_dir/kit-start.sh" >> $HOME/.bashrc
 
 echo ""
 echo "Setup complete! Alias 'kit' added to ~/.bashrc"
