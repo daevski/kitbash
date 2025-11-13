@@ -563,7 +563,7 @@ is_kitbash_environment() {
 trap cleanup EXIT
 
 # Check if we should delegate to existing environment first
-if is_kitbash_environment && [ $# -gt 0 ] && [[ "$1" != "-*" ]]; then
+if is_kitbash_environment && [ $# -gt 0 ]; then
     # We have arguments and we're in an existing environment
     # Check if the first argument might be a module name or special command
     case "$1" in
@@ -573,6 +573,9 @@ if is_kitbash_environment && [ $# -gt 0 ] && [[ "$1" != "-*" ]]; then
             source "$KITBASH_LIB/run-setup.sh"
             main_setup "$@"
             exit $?
+            ;;
+        -*)
+            # Other flags starting with - should go to main() for bootstrap handling
             ;;
         *)
             # Check if it's a module file in kit.d only
