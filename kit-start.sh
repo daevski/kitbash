@@ -570,7 +570,6 @@ if is_kitbash_environment && [ $# -gt 0 ]; then
     case "$1" in
         "help"|"-h"|"--help")
             # These are valid run-setup commands, delegate to it
-            log_info "Using existing kitbash environment..."
             source "$KITBASH_LIB/run-setup.sh"
             main_setup "$@"
             exit $?
