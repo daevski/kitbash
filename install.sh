@@ -27,7 +27,6 @@ install_kit() {
     # Set up the alias
     set_alias_kit "$target_dir/kit-start.sh"
 
-    echo ""
     echo "Setup complete! Alias '${alias_name}' added to ~/.bashrc"
     echo ""
     echo "To use the alias now, run:"
