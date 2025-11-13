@@ -59,7 +59,7 @@ show_usage() {
     echo "Usage: $cmd_name [MODULE] [OPTIONS]"
     echo ""
     echo "Run the full setup or individual modules:"
-    echo "  $cmd_name                         Run all enabled modules (discovered automatically)"
+    echo "  $cmd_name --setup                 Run all enabled modules (discovered automatically)"
     echo "  $cmd_name <module_name>           Run a specific module"
     echo "  $cmd_name help                    Show this help message"
     echo ""
