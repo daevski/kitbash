@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Editor Environment Configuration
-# Sets the default EDITOR and VISUAL environment variables
+# Module: editor.sh
+# Purpose: Set default EDITOR and VISUAL environment variables
+# Tier: 3 (Core User Tools)
 
 EDITOR_CHOICE="${1:-$_editor}"
 

@@ -2,7 +2,7 @@
 
 # Module: greetd.sh
 # Purpose: Install and configure greetd + gtkgreet display manager
-# Provides a minimal, Wayland-native login screen with Catppuccin Frappé theming
+# Tier: 4 (Window Managers & Display)
 
 log_info "Setting up greetd display manager with gtkgreet"
 

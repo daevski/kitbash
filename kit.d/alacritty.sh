@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Module: alacritty.sh
+# Purpose: Install Alacritty GPU-accelerated terminal emulator
+# Tier: 3 (Core User Tools)
+
 log_info "Installing Alacritty terminal emulator"
 
 # Check if Alacritty is already installed

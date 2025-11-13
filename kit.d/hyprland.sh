@@ -2,7 +2,7 @@
 
 # Module: hyprland.sh
 # Purpose: Install Hyprland dynamic tiling Wayland compositor and ecosystem tools
-# Hyprland provides smooth animations and i3/Sway-like tiling
+# Tier: 4 (Window Managers & Display)
 # Includes: hyprland, hyprlock, hypridle, hyprpaper, hyprexpo
 
 log_info "Setting up Hyprland compositor and ecosystem"

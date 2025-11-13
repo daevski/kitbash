@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Module: vscode.sh
+# Purpose: Install Visual Studio Code editor and repository
+# Tier: 2 (Package Repositories)
+
 log_info "Setting up Visual Studio Code repository"
 
 # Check if VS Code is already installed

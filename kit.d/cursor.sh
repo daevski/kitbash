@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Cursor theme setup script
-# Sets up Breeze cursor theme for Sway/Niri/Wayland
+# Module: cursor.sh
+# Purpose: Set up cursor theme for Wayland compositors
+# Tier: 5 (Appearance & Theming)
 
 CURSOR_THEME="${1:-breeze_cursors}"
 CURSOR_SIZE="${2:-24}"

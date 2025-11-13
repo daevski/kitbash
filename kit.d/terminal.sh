@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Module: terminal.sh
+# Purpose: Set default terminal emulator
+# Tier: 3 (Core User Tools)
+
 # Exit on any error
 set -e
 

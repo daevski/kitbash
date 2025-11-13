@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Ollama manual installation script
-# Based on: https://github.com/ollama/ollama/blob/main/docs/linux.md
+# Module: ollama.sh
+# Purpose: Install Ollama AI runtime as systemd service
+# Tier: 6 (System Services)
 
 log_info "Installing Ollama manually"
 

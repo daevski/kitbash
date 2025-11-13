@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Module: sddm.sh
+# Purpose: Configure SDDM login manager
+# Tier: 4 (Window Managers & Display)
+
 # Exit on any error
 set -e
 

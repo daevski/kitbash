@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Module: hostname.sh
+# Purpose: Set system hostname via hostnamectl
+# Tier: 1 (System Fundamentals)
+
 # Check if hostname is provided as first parameter
 if [ -z "$1" ]; then
     log_error "No hostname provided. Usage: $0 <new_hostname>"

@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Dotfiles Module - Manage $HOME as git repo for dotfiles
+# Module: dotfiles.sh
+# Purpose: Manage $HOME as git repo for dotfiles
+# Tier: 0 (Dotfiles Management - FIRST)
 
 DOTFILES_REPO="${_dotfiles_repo:-https://github.com/daevski/dotfiles.git}"
 DOTFILES_BRANCH="${_dotfiles_branch:-main}"

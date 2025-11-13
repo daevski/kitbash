@@ -1,6 +1,8 @@
 #!/bin/bash
-# GTK Theme Installation Module
-# Installs GTK theme for dark mode support (currently supports Catppuccin)
+
+# Module: theme.sh
+# Purpose: Install GTK theme for dark mode support (Catppuccin)
+# Tier: 5 (Appearance & Theming)
 
 THEME="${1:-$_theme}"
 

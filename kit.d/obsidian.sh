@@ -2,6 +2,7 @@
 
 # Module: obsidian.sh
 # Purpose: Install Obsidian markdown editor via AppImage
+# Tier: 3 (Core User Tools)
 
 log_info "Installing Obsidian markdown editor"
 

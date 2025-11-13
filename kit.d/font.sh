@@ -1,6 +1,8 @@
 #!/bin/bash
-# Font Installation Module
-# Downloads and installs fonts from predefined URLs or local paths
+
+# Module: font.sh
+# Purpose: Download and install fonts from URLs or local paths
+# Tier: 3 (Core User Tools)
 
 PRIMARY_FONT="${1:-$_font}"
 

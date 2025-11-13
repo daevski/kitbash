@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Mount and Symlink Management Script (SAFE VERSION)
-# Configures network and local mount points and creates convenience symlinks
-# This version includes safety checks to prevent boot failures
+# Module: mounts.sh
+# Purpose: Configure network and local mount points with safety checks
+# Tier: 6 (System Services)
 
 log_info "Setting up mounts and symlinks"
 

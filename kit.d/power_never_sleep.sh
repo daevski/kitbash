@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Power Management Configuration
-# Ensures system never auto-sleeps while allowing screen lock and monitor power-off
+# Module: power_never_sleep.sh
+# Purpose: Disable automatic system sleep/suspend
+# Tier: 1 (System Fundamentals)
 
 log_info "Configuring power management to prevent system sleep"
 

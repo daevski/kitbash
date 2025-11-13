@@ -2,7 +2,7 @@
 
 # Module: jq.sh
 # Purpose: Install jq - lightweight and flexible command-line JSON processor
-# jq is used for parsing, filtering, and transforming JSON data
+# Tier: 1 (System Fundamentals)
 
 log_info "Setting up jq"
 

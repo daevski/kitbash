@@ -2,6 +2,7 @@
 
 # Module: copyq.sh
 # Purpose: Install and configure CopyQ advanced clipboard manager
+# Tier: 3 (Core User Tools)
 
 log_info "Setting up CopyQ clipboard manager"
 

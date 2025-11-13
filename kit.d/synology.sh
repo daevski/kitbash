@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Module: synology.sh
+# Purpose: Install Synology Drive client from COPR repository
+# Tier: 2 (Package Repositories)
+
 # Exit on any error
 set -e
 

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Module: google_chrome.sh
+# Purpose: Install Google Chrome browser and repository
+# Tier: 2 (Package Repositories)
+
 log_info "Setting up Google Chrome repository"
 
 # Check if Google Chrome is already installed

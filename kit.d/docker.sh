@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Module: docker.sh
+# Purpose: Install and configure Docker engine
+# Tier: 6 (System Services)
+
 # Exit on any error
 set -e
 

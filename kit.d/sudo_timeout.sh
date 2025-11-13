@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Sudo Configuration Management Script
-# Configures sudo timeout and other sudo preferences
+# Module: sudo_timeout.sh
+# Purpose: Configure sudo password cache timeout
+# Tier: 1 (System Fundamentals)
 # Can be called with timeout value as parameter or uses _sudo_timeout from kit.conf
 
 # Determine timeout value - use parameter if provided, otherwise use config
