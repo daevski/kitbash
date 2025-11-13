@@ -6,3 +6,7 @@ kit.log
 
 # Backup files
 *.bak
+
+# Working notes and proposals
+MODULE_EXECUTION_ORDER.txt
+UNINSTALL_FRAMEWORK_PROPOSAL.md
