@@ -460,11 +460,11 @@ main() {
                     echo "Existing environment detected - you can use either:"
                     echo ""
                     echo "Module mode (run specific modules):"
-                    echo "  $0 <module>          # Run specific module"
-                    echo "  $0 help              # Show available modules"
+                    echo "  $(basename "$0") <module>          # Run specific module"
+                    echo "  $(basename "$0") help              # Show available modules"
                     echo ""
                     echo "Bootstrap mode (fresh setup):"
-                    echo "  $0 [OPTIONS]         # Run full bootstrap"
+                    echo "  $(basename "$0") [OPTIONS]         # Run full bootstrap"
                     echo ""
                     echo "Bootstrap Options:"
                     echo "  -y, --yes           Skip confirmation prompts"
@@ -479,7 +479,7 @@ main() {
                         fi
                     done
                 else
-                    echo "Usage: $0 [OPTIONS]"
+                    echo "Usage: $(basename "$0") [OPTIONS]"
                     echo ""
                     echo "Options:"
                     echo "  -y, --yes           Skip confirmation prompts"
@@ -488,10 +488,10 @@ main() {
                     echo "  -h, --help          Show this help message"
                     echo ""
                     echo "Examples:"
-                    echo "  $0                           # Interactive setup"
-                    echo "  $0 --defaults                # Use all defaults (daevski/dotfiles)"
-                    echo "  $0 --repo myuser/mydotfiles  # Use specific repository"
-                    echo "  $0 -y --defaults             # Non-interactive with defaults"
+                    echo "  $(basename "$0")                           # Interactive setup"
+                    echo "  $(basename "$0") --defaults                # Use all defaults (daevski/dotfiles)"
+                    echo "  $(basename "$0") --repo myuser/mydotfiles  # Use specific repository"
+                    echo "  $(basename "$0") -y --defaults             # Non-interactive with defaults"
                     echo ""
                     echo "This script will:"
                     echo "  1. Prompt for GitHub repository (unless --defaults or --repo used)"
@@ -592,7 +592,7 @@ if is_kitbash_environment && [ $# -gt 0 ] && [[ "$1" != "-*" ]]; then
                     fi
                 done
                 echo ""
-                echo "Use '$0 --help' for more information"
+                echo "Use '$(basename "$0") --help' for more information"
                 exit 1
             fi
             ;;

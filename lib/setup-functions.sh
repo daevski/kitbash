@@ -55,12 +55,12 @@ setup_cursor() {
 }
 
 show_usage() {
-    echo "Usage: $0 [MODULE] [OPTIONS]"
+    echo "Usage: $(basename "$0") [MODULE] [OPTIONS]"
     echo ""
     echo "Run the full setup or individual modules:"
-    echo "  $0                         Run all enabled modules (discovered automatically)"
-    echo "  $0 <module_name>           Run a specific module"
-    echo "  $0 help                    Show this help message"
+    echo "  $(basename "$0")                         Run all enabled modules (discovered automatically)"
+    echo "  $(basename "$0") <module_name>           Run a specific module"
+    echo "  $(basename "$0") help                    Show this help message"
     echo ""
     echo "Configuration:"
     echo "  _wallpaper_targets         Array of wallpaper locations to update"

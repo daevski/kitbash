@@ -59,6 +59,9 @@ init_paths() {
     export KITBASH_LOG="$KITBASH_ROOT/kit.log"
     export KITBASH_PACKAGES="$KITBASH_ROOT/packages.txt"
 
+    # Default alias name for kitbash
+    export KITBASH_ALIAS="${KITBASH_ALIAS:-kit}"
+
     # Validate that we found a valid kitbash installation
     if [ ! -d "$KITBASH_MODULES" ]; then
         echo "ERROR: Kitbash modules directory not found at: $KITBASH_MODULES" >&2
@@ -128,4 +131,5 @@ debug_paths() {
     echo "  KITBASH_CONFIG_EXAMPLE: $KITBASH_CONFIG_EXAMPLE"
     echo "  KITBASH_LOG: $KITBASH_LOG"
     echo "  KITBASH_PACKAGES: $KITBASH_PACKAGES"
+    echo "  KITBASH_ALIAS: $KITBASH_ALIAS"
 }
