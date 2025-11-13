@@ -55,19 +55,20 @@ setup_cursor() {
 }
 
 show_usage() {
-    echo "Usage: $(basename "$0") [MODULE] [OPTIONS]"
+    local cmd_name="${KITBASH_ALIAS:-kit}"
+    echo "Usage: $cmd_name [MODULE] [OPTIONS]"
     echo ""
     echo "Run the full setup or individual modules:"
-    echo "  $(basename "$0")                         Run all enabled modules (discovered automatically)"
-    echo "  $(basename "$0") <module_name>           Run a specific module"
-    echo "  $(basename "$0") help                    Show this help message"
+    echo "  $cmd_name                         Run all enabled modules (discovered automatically)"
+    echo "  $cmd_name <module_name>           Run a specific module"
+    echo "  $cmd_name help                    Show this help message"
     echo ""
     echo "Configuration:"
     echo "  _wallpaper_targets         Array of wallpaper locations to update"
     echo "                             Valid values: desktop, lock, login"
     echo "                             Current: (${_wallpaper_targets[*]})"
     echo ""
-    echo "Available modules (auto-discovered from $_scripts):"
+    echo "Available modules:"
     for script_file in "$_scripts"*.sh; do
         if [ -f "$script_file" ]; then
             module_name=$(basename "$script_file" .sh)
@@ -82,7 +83,7 @@ show_usage() {
     done
     echo ""
     echo "Examples:"
-    echo "  $(basename "$0") google_chrome           Run the google_chrome module"
-    echo "  $(basename "$0") wallpaper ~/Pictures/my-wallpaper.jpg"
-    echo "  $(basename "$0") hostname mycomputer"
+    echo "  $cmd_name google_chrome           Run the google_chrome module"
+    echo "  $cmd_name wallpaper ~/Pictures/my-wallpaper.jpg"
+    echo "  $cmd_name hostname mycomputer"
 }
