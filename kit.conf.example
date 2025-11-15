@@ -37,6 +37,7 @@ _sudo_timeout=15
 # OPTIONAL MODULES (true/false)
 # ==============================================================================
 
+_claude_cli=false                    # Install Claude CLI (AI assistant)
 _discord=false                       # Install Discord chat client from RPM Fusion
 _dotfiles=true                      # Clone dotfiles repo (requires _dotfiles_repo)
 _docker=false                        # Install Docker
