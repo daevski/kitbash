@@ -50,6 +50,7 @@ _sddm=false                          # Configure SDDM login manager
 _steam=false                         # Install Steam gaming platform with RPM Fusion
 _synology=true                      # Install Synology Drive
 _vscode=true                        # Install VS Code
+_zoom=false                          # Install Zoom video conferencing
 
 # ==============================================================================
 # DOTFILES REPOSITORY (only used if _dotfiles=true)
