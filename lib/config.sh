@@ -25,20 +25,69 @@ load_config() {
 
             # Check if example exists to provide helpful guidance
             if [ -f "$KITBASH_CONFIG_EXAMPLE" ]; then
-                echo "To get started, copy the example configuration and customize it:" >&2
-                echo "  cp $KITBASH_CONFIG_EXAMPLE $KITBASH_CONFIG" >&2
-                echo "" >&2
-                echo "Then edit $KITBASH_CONFIG to match your preferences:" >&2
-                echo "  - Set your hostname (_hostname)" >&2
-                echo "  - Choose your terminal emulator (_terminal)" >&2
-                echo "  - Choose your editor (_editor)" >&2
-                echo "  - Enable/disable optional modules" >&2
+                # If running interactively, offer to create config
+                if [ -t 0 ] && [ -t 1 ]; then
+                    echo "Would you like to create kit.conf now? [Y/n]: " >&2
+                    read -r response
+                    response="${response:-y}"  # Default to yes
+
+                    if [[ "$response" =~ ^[Yy]$ ]]; then
+                        echo "Copying example configuration..." >&2
+                        if cp "$KITBASH_CONFIG_EXAMPLE" "$KITBASH_CONFIG"; then
+                            echo "Configuration file created: $KITBASH_CONFIG" >&2
+                            echo "" >&2
+                            echo "Opening configuration in your editor..." >&2
+                            echo "Please customize these settings:" >&2
+                            echo "  - _hostname (your system hostname)" >&2
+                            echo "  - _terminal (alacritty, kitty, gnome-terminal)" >&2
+                            echo "  - _editor (vim, nvim, nano, code)" >&2
+                            echo "  - Enable/disable optional modules (true/false)" >&2
+                            echo "" >&2
+                            echo "Press Enter when ready to edit..." >&2
+                            read -r
+
+                            # Determine which editor to use
+                            local editor="${EDITOR:-vim}"
+                            if ! command -v "$editor" >/dev/null 2>&1; then
+                                editor="vi"  # Fallback to vi (always available)
+                            fi
+
+                            # Open editor
+                            "$editor" "$KITBASH_CONFIG"
+
+                            # After editing, reload config
+                            echo "" >&2
+                            echo "Configuration saved. Continuing with setup..." >&2
+                            source "$KITBASH_CONFIG"
+                            return $KIT_EXIT_SUCCESS
+                        else
+                            echo "ERROR: Failed to copy configuration file" >&2
+                            return $KIT_EXIT_CONFIG_MISSING
+                        fi
+                    else
+                        echo "Setup cancelled. Please create kit.conf manually:" >&2
+                        echo "  cp $KITBASH_CONFIG_EXAMPLE $KITBASH_CONFIG" >&2
+                        return $KIT_EXIT_USER_CANCELLED
+                    fi
+                else
+                    # Non-interactive - show manual instructions
+                    echo "To get started, copy the example configuration and customize it:" >&2
+                    echo "  cp $KITBASH_CONFIG_EXAMPLE $KITBASH_CONFIG" >&2
+                    echo "" >&2
+                    echo "Then edit $KITBASH_CONFIG to match your preferences:" >&2
+                    echo "  - Set your hostname (_hostname)" >&2
+                    echo "  - Choose your terminal emulator (_terminal)" >&2
+                    echo "  - Choose your editor (_editor)" >&2
+                    echo "  - Enable/disable optional modules" >&2
+                    echo "" >&2
+                    return $KIT_EXIT_CONFIG_MISSING
+                fi
             else
                 echo "ERROR: Template file also missing: $KITBASH_CONFIG_EXAMPLE" >&2
                 echo "Please ensure you're running kitbash from the correct directory." >&2
+                echo "" >&2
+                return $KIT_EXIT_CONFIG_MISSING
             fi
-            echo "" >&2
-            return $KIT_EXIT_CONFIG_MISSING
         else
             # Config optional - just warn and continue
             if command -v log_debug >/dev/null 2>&1; then
