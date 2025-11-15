@@ -20,22 +20,37 @@ log_debug "Terminal application: $TERMINAL_APP"
 
 # Check if the terminal application is installed
 if ! command -v "$TERMINAL_APP" >/dev/null 2>&1; then
-    log_warning "$TERMINAL_APP not found, attempting to install it..."
+    log_info "Installing $TERMINAL_APP..."
 
-    # Check if there's a module to install this terminal
-    if [ -f "$KITBASH_MODULES/${TERMINAL_APP}.sh" ]; then
-        log_info "Found installer module for $TERMINAL_APP, running it..."
-        if (source "$KITBASH_MODULES/${TERMINAL_APP}.sh"); then
-            log_success "$TERMINAL_APP installed successfully"
-        else
-            log_error "Failed to install $TERMINAL_APP"
-            exit 1
-        fi
-    else
-        log_error "$TERMINAL_APP not found and no installer module exists"
-        log_error "Please install $TERMINAL_APP manually or create $KITBASH_MODULES/${TERMINAL_APP}.sh"
-        exit 1
-    fi
+    # Install based on terminal type
+    case "$TERMINAL_APP" in
+        alacritty)
+            if ! run_with_progress "installing Alacritty" sudo dnf install -y alacritty; then
+                log_error "Failed to install Alacritty"
+                exit $KIT_EXIT_MODULE_FAILED
+            fi
+            ;;
+        kitty)
+            if ! run_with_progress "installing Kitty" sudo dnf install -y kitty; then
+                log_error "Failed to install Kitty"
+                exit $KIT_EXIT_MODULE_FAILED
+            fi
+            ;;
+        gnome-terminal)
+            if ! run_with_progress "installing GNOME Terminal" sudo dnf install -y gnome-terminal; then
+                log_error "Failed to install GNOME Terminal"
+                exit $KIT_EXIT_MODULE_FAILED
+            fi
+            ;;
+        *)
+            log_error "Unsupported terminal: $TERMINAL_APP"
+            log_error "Supported terminals: alacritty, kitty, gnome-terminal"
+            log_error "To add support, edit kit.d/terminal.sh"
+            exit $KIT_EXIT_INVALID_INPUT
+            ;;
+    esac
+
+    log_success "$TERMINAL_APP installed successfully"
 fi
 
 # Set terminal as default system-wide
