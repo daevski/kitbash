@@ -1,3 +1,5 @@
+# Example usage: curl -fsSL https://raw.githubusercontent.com/daevski/kitbash/main/install.sh | bash
+
 gh_username=daevski
 repo_name=kitbash
 working_dir="$HOME/Downloads"
