@@ -2,7 +2,7 @@
 
 # Module: ollama.sh
 # Purpose: Install Ollama AI runtime as systemd service
-# Tier: 6 (System Services)
+# Tier: 5 (Applications)
 
 log_info "Installing Ollama manually"
 

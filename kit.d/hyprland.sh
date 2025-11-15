@@ -2,7 +2,7 @@
 
 # Module: hyprland.sh
 # Purpose: Install Hyprland dynamic tiling Wayland compositor and ecosystem tools
-# Tier: 4 (Window Managers & Display)
+# Tier: 2 (Core Desktop Environment)
 # Includes: hyprland, hyprlock, hypridle, hyprpaper, hyprexpo
 
 log_info "Setting up Hyprland compositor and ecosystem"

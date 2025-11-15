@@ -2,7 +2,7 @@
 
 # Module: awscli.sh
 # Purpose: Install AWS Command Line Interface v2 (awscli)
-# Tier: 3 (Core User Tools)
+# Tier: 5 (Applications)
 
 log_info "Setting up AWS CLI v2"
 

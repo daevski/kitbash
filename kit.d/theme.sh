@@ -2,7 +2,7 @@
 
 # Module: theme.sh
 # Purpose: Install GTK theme for dark mode support (Catppuccin)
-# Tier: 5 (Appearance & Theming)
+# Tier: 2 (Core Desktop Environment)
 
 THEME="${1:-$_theme}"
 

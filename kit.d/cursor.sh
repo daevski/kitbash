@@ -2,7 +2,7 @@
 
 # Module: cursor.sh
 # Purpose: Set up cursor theme for Wayland compositors
-# Tier: 5 (Appearance & Theming)
+# Tier: 2 (Core Desktop Environment)
 
 CURSOR_THEME="${1:-breeze_cursors}"
 CURSOR_SIZE="${2:-24}"

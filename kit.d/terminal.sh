@@ -2,7 +2,7 @@
 
 # Module: terminal.sh
 # Purpose: Set default terminal emulator
-# Tier: 3 (Core User Tools)
+# Tier: 2 (Core Desktop Environment)
 
 # Exit on any error
 set -e

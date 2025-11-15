@@ -2,7 +2,7 @@
 
 # Module: niri.sh
 # Purpose: Install Niri scrollable-tiling Wayland compositor and idle/lock tools
-# Tier: 4 (Window Managers & Display)
+# Tier: 2 (Core Desktop Environment)
 # Niri is a modern Wayland compositor with a unique scrollable tiling layout
 # Also installs hyprlock/hypridle for screen locking and idle management
 

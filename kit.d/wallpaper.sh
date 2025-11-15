@@ -2,7 +2,7 @@
 
 # Module: wallpaper.sh
 # Purpose: Download and configure wallpapers for desktop/lock/login
-# Tier: 5 (Appearance & Theming)
+# Tier: 2 (Core Desktop Environment)
 
 # Check if wallpaper path is provided as first parameter
 if [ -z "$1" ]; then

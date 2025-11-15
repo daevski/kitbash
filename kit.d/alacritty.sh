@@ -2,7 +2,7 @@
 
 # Module: alacritty.sh
 # Purpose: Install Alacritty GPU-accelerated terminal emulator
-# Tier: 3 (Core User Tools)
+# Tier: 4 (Core User Tools)
 
 log_info "Installing Alacritty terminal emulator"
 

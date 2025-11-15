@@ -2,7 +2,7 @@
 
 # Module: discord.sh
 # Purpose: Install Discord chat client from RPM Fusion nonfree repository
-# Tier: 2 (Package Repositories)
+# Tier: 5 (Applications)
 
 log_info "Setting up Discord"
 

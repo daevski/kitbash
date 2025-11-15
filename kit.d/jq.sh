@@ -2,7 +2,7 @@
 
 # Module: jq.sh
 # Purpose: Install jq - lightweight and flexible command-line JSON processor
-# Tier: 1 (System Fundamentals)
+# Tier: 4 (Core User Tools)
 
 log_info "Setting up jq"
 

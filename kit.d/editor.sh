@@ -2,7 +2,7 @@
 
 # Module: editor.sh
 # Purpose: Set default EDITOR and VISUAL environment variables
-# Tier: 3 (Core User Tools)
+# Tier: 1 (System Fundamentals)
 
 EDITOR_CHOICE="${1:-$_editor}"
 

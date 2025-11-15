@@ -2,7 +2,7 @@
 
 # Module: zoom.sh
 # Purpose: Install Zoom video conferencing application
-# Tier: 3 (Applications)
+# Tier: 5 (Applications)
 
 log_info "Installing Zoom"
 

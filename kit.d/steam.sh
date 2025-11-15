@@ -2,7 +2,7 @@
 
 # Module: steam.sh
 # Purpose: Install Steam gaming platform with RPM Fusion nonfree repository
-# Tier: 2 (Package Repositories)
+# Tier: 5 (Applications)
 
 log_info "Setting up Steam"
 

@@ -2,7 +2,7 @@
 
 # Module: sddm.sh
 # Purpose: Configure SDDM login manager
-# Tier: 4 (Window Managers & Display)
+# Tier: 2 (Core Desktop Environment)
 
 # Exit on any error
 set -e

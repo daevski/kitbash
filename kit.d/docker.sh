@@ -2,7 +2,7 @@
 
 # Module: docker.sh
 # Purpose: Install and configure Docker engine
-# Tier: 6 (System Services)
+# Tier: 5 (Applications)
 
 # Exit on any error
 set -e

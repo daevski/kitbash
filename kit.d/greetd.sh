@@ -2,7 +2,7 @@
 
 # Module: greetd.sh
 # Purpose: Install and configure greetd + gtkgreet display manager
-# Tier: 4 (Window Managers & Display)
+# Tier: 2 (Core Desktop Environment)
 
 log_info "Setting up greetd display manager with gtkgreet"
 
